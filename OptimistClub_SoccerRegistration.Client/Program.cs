@@ -1,27 +1,41 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-using System.Globalization;
+using Microsoft.JSInterop;
 using OptimistClub_SoccerRegistration.Client;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.RootComponents.Add<App>("#app");
-
-// Auth (keep)
-builder.Services.AddAuthorizationCore();
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
-
-// Localization (now works)
+// Localization
 builder.Services.AddLocalization(options =>
 {
     options.ResourcesPath = "Resources";
 });
 
-// Default culture
-CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-CA");
-CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-CA");
+// Auth
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
-await builder.Build().RunAsync();
+builder.RootComponents.Add<App>("#app");
+
+var host = builder.Build();
+
+// ?? READ CULTURE COOKIE BEFORE RUN
+var js = host.Services.GetRequiredService<IJSRuntime>();
+var cultureName = await js.InvokeAsync<string>("blazorCulture.get");
+
+var culture = !string.IsNullOrWhiteSpace(cultureName)
+    ? new CultureInfo(cultureName)
+    : new CultureInfo("en-CA");
+
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+// ? THIS WILL SHOW IN BROWSER DEVTOOLS
+await js.InvokeVoidAsync(
+    "console.log",
+    $"Client culture = {CultureInfo.CurrentUICulture.Name}"
+);
+
+await host.RunAsync();
