@@ -1,67 +1,68 @@
 ﻿@page "/register"
 
+@using System.Globalization
 @using Microsoft.Extensions.Localization
-@inject IStringLocalizerFactory LocalizerFactory
+@inject IStringLocalizer<App> L
 
-<h2>@L?["Title"]</h2>
+<h2>@L["Title"]</h2>
 
 <p class="text-muted">
-    @L?["Intro"]
+    @L["Intro"]
 </p>
 
 <form>
 
     <!-- PLAYER INFORMATION -->
     <div class="card mb-4">
-        <div class="card-header">@L?["PlayerInfo"]</div>
+        <div class="card-header">@L["PlayerInfo"]</div>
         <div class="card-body">
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">@L?["FirstName"]</label>
+                    <label class="form-label">@L["FirstName"]</label>
                     <input class="form-control" />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">@L?["LastName"]</label>
+                    <label class="form-label">@L["LastName"]</label>
                     <input class="form-control" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">@L?["Gender"]</label>
+                    <label class="form-label">@L["Gender"]</label>
                     <select class="form-select">
-                        <option value="">@L?["Select"]</option>
-                        <option>@L?["Male"]</option>
-                        <option>@L?["Female"]</option>
+                        <option value="">@L["Select"]</option>
+                        <option>@L["Male"]</option>
+                        <option>@L["Female"]</option>
                     </select>
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">@L?["Town"]</label>
+                    <label class="form-label">@L["Town"]</label>
                     <input class="form-control" />
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">@L?["DateOfBirth"]</label>
+                    <label class="form-label">@L["DateOfBirth"]</label>
                     <input type="date" class="form-control" />
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">@L?["ChildShirtSize"]</label>
+                <label class="form-label">@L["ChildShirtSize"]</label>
                 <select class="form-select">
-                    <option value="">@L?["Select"]</option>
-                    <option>@L?["ChildXS"]</option>
-                    <option>@L?["ChildS"]</option>
-                    <option>@L?["ChildM"]</option>
-                    <option>@L?["ChildL"]</option>
+                    <option value="">@L["Select"]</option>
+                    <option>@L["ChildXS"]</option>
+                    <option>@L["ChildS"]</option>
+                    <option>@L["ChildM"]</option>
+                    <option>@L["ChildL"]</option>
                 </select>
             </div>
 
             <div class="alert alert-warning">
-                @L?["Important2022"]
+                @L["Important2022"]
             </div>
 
         </div>
@@ -69,28 +70,28 @@
 
     <!-- PARENT / GUARDIAN INFORMATION -->
     <div class="card mb-4">
-        <div class="card-header">@L?["ParentInfo"]</div>
+        <div class="card-header">@L["ParentInfo"]</div>
         <div class="card-body">
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">@L?["FirstName"]</label>
+                    <label class="form-label">@L["FirstName"]</label>
                     <input class="form-control" />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">@L?["LastName"]</label>
+                    <label class="form-label">@L["LastName"]</label>
                     <input class="form-control" />
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">@L?["Phone"]</label>
+                <label class="form-label">@L["Phone"]</label>
                 <input class="form-control" />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">@L?["Email"]</label>
+                <label class="form-label">@L["Email"]</label>
                 <input type="email" class="form-control" />
             </div>
 
@@ -99,29 +100,29 @@
 
     <!-- SIBLING INFORMATION -->
     <div class="card mb-4">
-        <div class="card-header">@L?["SiblingInfo"]</div>
+        <div class="card-header">@L["SiblingInfo"]</div>
         <div class="card-body">
 
             @for (int i = 0; i < siblings.Count; i++)
             {
                 <div class="border rounded p-3 mb-3">
                     <h6 class="text-muted">
-                        @L?["Sibling"] @(i + 1)
+                        @L["Sibling"] @(i + 1)
                     </h6>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L?["FirstName"]</label>
+                            <label class="form-label">@L["FirstName"]</label>
                             <input class="form-control" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L?["LastName"]</label>
+                            <label class="form-label">@L["LastName"]</label>
                             <input class="form-control" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L?["DateOfBirth"]</label>
+                            <label class="form-label">@L["DateOfBirth"]</label>
                             <input type="date" class="form-control" />
                         </div>
                     </div>
@@ -131,7 +132,7 @@
             <button type="button"
                     class="btn btn-outline-secondary btn-sm"
                     @onclick="AddSibling">
-                @L?["AddSibling"]
+                @L["AddSibling"]
             </button>
 
         </div>
@@ -139,7 +140,7 @@
 
     <!-- VOLUNTEER INFORMATION -->
     <div class="card mb-4">
-        <div class="card-header">@L?["VolunteerInfo"]</div>
+        <div class="card-header">@L["VolunteerInfo"]</div>
         <div class="card-body">
 
             <div class="form-check mb-3">
@@ -147,39 +148,39 @@
                        type="checkbox"
                        @bind="isVolunteer" />
                 <label class="form-check-label" for="volunteerToggle">
-                    @L?["VolunteerQuestion"]
+                    @L["VolunteerQuestion"]
                 </label>
             </div>
 
             @if (isVolunteer)
             {
                 <div class="mb-3">
-                    <label class="form-label">@L?["VolunteerRole"]</label>
+                    <label class="form-label">@L["VolunteerRole"]</label>
                     <select class="form-select">
-                        <option value="">@L?["Select"]</option>
-                        <option>@L?["Coach"]</option>
-                        <option>@L?["Referee"]</option>
+                        <option value="">@L["Select"]</option>
+                        <option>@L["Coach"]</option>
+                        <option>@L["Referee"]</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@L?["CriminalCheck"]</label>
+                    <label class="form-label">@L["CriminalCheck"]</label>
                     <select class="form-select">
-                        <option value="">@L?["Select"]</option>
-                        <option>@L?["Yes"]</option>
-                        <option>@L?["No"]</option>
+                        <option value="">@L["Select"]</option>
+                        <option>@L["Yes"]</option>
+                        <option>@L["No"]</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@L?["VolunteerShirtSize"]</label>
+                    <label class="form-label">@L["VolunteerShirtSize"]</label>
                     <select class="form-select">
-                        <option value="">@L?["Select"]</option>
-                        <option>@L?["AdultS"]</option>
-                        <option>@L?["AdultM"]</option>
-                        <option>@L?["AdultL"]</option>
-                        <option>@L?["AdultXL"]</option>
-                        <option>@L?["AdultXXL"]</option>
+                        <option value="">@L["Select"]</option>
+                        <option>@L["AdultS"]</option>
+                        <option>@L["AdultM"]</option>
+                        <option>@L["AdultL"]</option>
+                        <option>@L["AdultXL"]</option>
+                        <option>@L["AdultXXL"]</option>
                     </select>
                 </div>
             }
@@ -188,43 +189,18 @@
     </div>
 
     <button class="btn btn-primary">
-        @L?["Submit"]
+        @L["Submit"]
     </button>
 
 </form>
 
 @code {
-    private IStringLocalizer? L;
     private bool isVolunteer;
 
     private List<Sibling> siblings = new()
     {
         new Sibling()
     };
-
-    protected override void OnInitialized()
-    {
-        var assemblyName = typeof(Register).Assembly.GetName().Name!;
-        // explicit baseName that matches embedded resource logical name
-        var baseName = "Resources.OptimistClub_SoccerRegistration.Client.Pages.Register";
-
-        try
-        {
-            L = LocalizerFactory.Create(baseName, assemblyName);
-            // quick check: if value equals key then try alternative
-            if (string.Equals(L["Title"].Value, "Title", StringComparison.Ordinal))
-            {
-                // fallback to type full name
-                L = LocalizerFactory.Create(typeof(Register).FullName!, assemblyName);
-            }
-        }
-        catch
-        {
-            L = LocalizerFactory.Create(typeof(Register).FullName!, assemblyName);
-        }
-
-        StateHasChanged();
-    }
 
     private void AddSibling()
     {

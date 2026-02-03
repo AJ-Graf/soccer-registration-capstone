@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
@@ -9,17 +8,19 @@
     <main>
         <div class="top-row px-4 d-flex align-items-center justify-content-end">
 
-            <!-- LANGUAGE TOGGLE -->
+            <!-- LANGUAGE TOGGLE (FORCES WASM RESTART) -->
             <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-outline-secondary"
-                        @onclick="@(() => SetLanguage("en-CA"))">
+                <a class="btn btn-sm btn-outline-secondary"
+                   href="/Culture/Set?culture=en-CA&redirectUri=/"
+                   rel="external">
                     EN
-                </button>
+                </a>
 
-                <button class="btn btn-sm btn-outline-secondary"
-                        @onclick="@(() => SetLanguage("fr-CA"))">
+                <a class="btn btn-sm btn-outline-secondary"
+                   href="/Culture/Set?culture=fr-CA&redirectUri=/"
+                   rel="external">
                     FR
-                </button>
+                </a>
             </div>
 
         </div>
@@ -35,15 +36,3 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
-
-@code {
-    private void SetLanguage(string culture)
-    {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-
-        NavigationManager.NavigateTo(
-            $"/Culture/Set?culture={culture}&redirectUri={Uri.EscapeDataString(uri.PathAndQuery)}",
-            forceLoad: true
-        );
-    }
-}

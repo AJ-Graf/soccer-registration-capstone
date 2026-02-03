@@ -1,11 +1,11 @@
 ﻿@page "/"
+@inject IStringLocalizer<App> L
 
-<h1>Optimist Club Soccer Registration</h1>
+<div class="home-hero">
+    <h1>@L["Title"]</h1>
+    <p class="lead">@L["Home_Intro"]</p>
 
-<p>
-    Welcome to the official soccer registration site.
-</p>
-
-<a class="btn btn-primary" href="/register">
-    Register a Player
-</a>
+    <NavLink class="btn btn-primary btn-lg mt-3" href="/register">
+        @L["Register_Button"]
+    </NavLink>
+</div>

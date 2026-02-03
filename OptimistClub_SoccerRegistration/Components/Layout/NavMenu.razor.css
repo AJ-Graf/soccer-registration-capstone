@@ -66,6 +66,55 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-arrow-bar-left' viewBox='0 0 16 16'%3E%3Cpath d='M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5ZM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5Z'/%3E%3C/svg%3E");
 }
 
+.nav-logo {
+    height: 34px;
+    width: auto;
+}
+
+.nav-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.nav-menu {
+    padding-top: 0.75rem;
+}
+
+.nav-link {
+    color: #e6e6e6;
+    border-radius: 6px;
+    margin: 0.25rem 0.75rem;
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+    .nav-link:hover {
+        background-color: rgba(255,255,255,0.12);
+        transform: translateX(2px);
+    }
+
+    .nav-link.active {
+        background-color: rgba(255,255,255,0.35);
+        color: #fff;
+        font-weight: 600;
+    }
+
+.nav-divider {
+    margin: 0.75rem 1rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-logout {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding-left: 0;
+}
+
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
@@ -107,6 +156,23 @@
 
 .navbar-toggler:checked ~ .nav-scrollable {
     display: block;
+}
+
+.sidebar-logo {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+    .sidebar-logo img {
+        width: 90px;
+        opacity: 0.95;
+}
+
+.navbar-brand span {
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 @media (min-width: 641px) {

@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optimist Club Soccer Registration</title>
+    <base href="/" />
+</head>
+<body>
+
+    <div id="app">Loading...</div>
+
+    <!-- Culture helper -->
+    <script src="culture.js"></script>
+
+    <!-- Set <html lang=""> from culture cookie -->
+    <script>
+        (function () {
+            const name = '.AspNetCore.Culture';
+            const match = document.cookie
+                .split('; ')
+                .find(row => row.startsWith(name + '='));
+
+            if (!match) return;
+
+            const value = decodeURIComponent(match.split('=')[1]);
+            const cultureMatch = value.match(/c=([^|]+)/);
+
+            if (cultureMatch) {
+                document.documentElement.lang = cultureMatch[1];
+            }
+        })();
+    </script>
+
+    <!-- Blazor WebAssembly runtime -->
+    <script src="_framework/blazor.webassembly.js"></script>
+
+</body>
+</html>
