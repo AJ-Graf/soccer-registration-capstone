@@ -18,8 +18,13 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(50)]
         public string LastName { get; set; } = string.Empty;
 
+        [StringLength(10)]
+        public string? ShirtSize { get; set; }
+
         [StringLength(25)]
-        public string? Role { get; set; } 
+        public string? Role { get; set; }
+
+        public bool CriminalCheckCompleted { get; set; }
 
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 

@@ -23,7 +23,13 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(1)]
         public string? Gender { get; set; }
 
+        [StringLength(50)]
+        public string? Town { get; set; }
+
         public string? MedicalInfo { get; set; }
+
+        [StringLength(10)]
+        public string? ShirtSize { get; set; }
 
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 
