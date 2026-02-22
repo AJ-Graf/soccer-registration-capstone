@@ -1,0 +1,373 @@
+﻿@page "/register"
+
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<OptimistClub_SoccerRegistration.SharedResource> L
+
+<h2>@L["Title"]</h2>
+
+<p class="text-muted">
+    @L["Intro"]
+</p>
+
+<form>
+
+    <!-- PLAYER INFORMATION -->
+    <div class="card mb-4">
+        <div class="card-header">@L["PlayerInfo"]</div>
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="playerFirstName">@L["FirstName"]</label>
+                    <input id="playerFirstName"
+                           name="playerFirstName"
+                           class="form-control"
+                           autocomplete="given-name"
+                           @bind="player.FirstName" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="playerLastName">@L["LastName"]</label>
+                    <input id="playerLastName"
+                           name="playerLastName"
+                           class="form-control"
+                           autocomplete="family-name"
+                           @bind="player.LastName" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="playerGender">@L["Gender"]</label>
+                    <select id="playerGender"
+                            name="playerGender"
+                            class="form-select"
+                            @bind="player.Gender">
+                        <option value="">@L["Select"]</option>
+                        <option value="Male">@L["Male"]</option>
+                        <option value="Female">@L["Female"]</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="playerTown">@L["Town"]</label>
+                    <input id="playerTown"
+                           name="playerTown"
+                           class="form-control"
+                           autocomplete="address-level2"
+                           @bind="player.Town" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="playerDob">@L["DateOfBirth"]</label>
+                    <input id="playerDob"
+                           name="playerDob"
+                           type="date"
+                           class="form-control"
+                           @bind="player.DateOfBirth"
+                           @bind:format="yyyy-MM-dd" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="playerShirtSize">@L["ChildShirtSize"]</label>
+                <select id="playerShirtSize"
+                        name="playerShirtSize"
+                        class="form-select"
+                        @bind="player.ShirtSize">
+                    <option value="">@L["Select"]</option>
+                    <option value="ChildXS">@L["ChildXS"]</option>
+                    <option value="ChildS">@L["ChildS"]</option>
+                    <option value="ChildM">@L["ChildM"]</option>
+                    <option value="ChildL">@L["ChildL"]</option>
+                </select>
+            </div>
+
+            <div class="alert alert-warning">
+                @L["Important2022"]
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PARENT / GUARDIAN INFORMATION -->
+    <div class="card mb-4">
+        <div class="card-header">@L["ParentInfo"]</div>
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="parentFirstName">@L["FirstName"]</label>
+                    <input id="parentFirstName"
+                           name="parentFirstName"
+                           class="form-control"
+                           autocomplete="given-name"
+                           @bind="parent.FirstName" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="parentLastName">@L["LastName"]</label>
+                    <input id="parentLastName"
+                           name="parentLastName"
+                           class="form-control"
+                           autocomplete="family-name"
+                           @bind="parent.LastName" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="parentPhone">@L["Phone"]</label>
+                <input id="parentPhone"
+                       name="parentPhone"
+                       class="form-control"
+                       autocomplete="tel"
+                       inputmode="tel"
+                       @bind="parent.Phone" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="parentEmail">@L["Email"]</label>
+                <input id="parentEmail"
+                       name="parentEmail"
+                       type="email"
+                       class="form-control"
+                       autocomplete="email"
+                       inputmode="email"
+                       @bind="parent.Email" />
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SIBLING INFORMATION -->
+    <div class="card mb-4">
+        <div class="card-header">@L["SiblingInfo"]</div>
+        <div class="card-body">
+
+            @if (siblings.Count == 0)
+            {
+                <!-- Optional helper text; remove if you want ONLY the button -->
+                <p class="text-muted mb-3">@L["NoSiblingsAdded"]</p>
+            }
+
+            @for (int i = 0; i < siblings.Count; i++)
+            {
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">@L["Sibling"] @(i + 1)</h6>
+
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                @onclick="() => RemoveSibling(i)">
+                            @L["RemoveSibling"]
+                        </button>
+                    </div>
+
+                    <!-- Same fields as Player Info -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="siblingFirstName_@i">@L["FirstName"]</label>
+                            <input id="siblingFirstName_@i"
+                                   name="siblingFirstName_@i"
+                                   class="form-control"
+                                   autocomplete="given-name"
+                                   @bind="siblings[i].FirstName" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="siblingLastName_@i">@L["LastName"]</label>
+                            <input id="siblingLastName_@i"
+                                   name="siblingLastName_@i"
+                                   class="form-control"
+                                   autocomplete="family-name"
+                                   @bind="siblings[i].LastName" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="siblingGender_@i">@L["Gender"]</label>
+                            <select id="siblingGender_@i"
+                                    name="siblingGender_@i"
+                                    class="form-select"
+                                    @bind="siblings[i].Gender">
+                                <option value="">@L["Select"]</option>
+                                <option value="Male">@L["Male"]</option>
+                                <option value="Female">@L["Female"]</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="siblingTown_@i">@L["Town"]</label>
+                            <input id="siblingTown_@i"
+                                   name="siblingTown_@i"
+                                   class="form-control"
+                                   autocomplete="address-level2"
+                                   @bind="siblings[i].Town" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="siblingDob_@i">@L["DateOfBirth"]</label>
+                            <input id="siblingDob_@i"
+                                   name="siblingDob_@i"
+                                   type="date"
+                                   class="form-control"
+                                   @bind="siblings[i].DateOfBirth"
+                                   @bind:format="yyyy-MM-dd" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="siblingShirtSize_@i">@L["ChildShirtSize"]</label>
+                        <select id="siblingShirtSize_@i"
+                                name="siblingShirtSize_@i"
+                                class="form-select"
+                                @bind="siblings[i].ShirtSize">
+                            <option value="">@L["Select"]</option>
+                            <option value="ChildXS">@L["ChildXS"]</option>
+                            <option value="ChildS">@L["ChildS"]</option>
+                            <option value="ChildM">@L["ChildM"]</option>
+                            <option value="ChildL">@L["ChildL"]</option>
+                        </select>
+                    </div>
+                </div>
+            }
+
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @onclick="AddSibling">
+                @L["AddSibling"]
+            </button>
+
+        </div>
+    </div>
+
+    <!-- VOLUNTEER INFORMATION -->
+    <div class="card mb-4">
+        <div class="card-header">@L["VolunteerInfo"]</div>
+        <div class="card-body">
+
+            <div class="form-check mb-3">
+                <input id="volunteerToggle"
+                       class="form-check-input"
+                       type="checkbox"
+                       @bind="isVolunteer"
+                       @bind:event="onchange"
+                       aria-expanded="@isVolunteer.ToString().ToLowerInvariant()"
+                       aria-controls="volunteerDetails" />
+                <label class="form-check-label" for="volunteerToggle">
+                    @L["VolunteerQuestion"]
+                </label>
+            </div>
+
+            @if (isVolunteer)
+            {
+                <div id="volunteerDetails">
+                    <div class="mb-3">
+                        <label class="form-label" for="volunteerRole">@L["VolunteerRole"]</label>
+                        <select id="volunteerRole"
+                                name="volunteerRole"
+                                class="form-select"
+                                @bind="volunteer.Role">
+                            <option value="">@L["Select"]</option>
+                            <option value="Coach">@L["Coach"]</option>
+                            <option value="Referee">@L["Referee"]</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="criminalCheck">@L["CriminalCheck"]</label>
+                        <select id="criminalCheck"
+                                name="criminalCheck"
+                                class="form-select"
+                                @bind="volunteer.CriminalCheck">
+                            <option value="">@L["Select"]</option>
+                            <option value="Yes">@L["Yes"]</option>
+                            <option value="No">@L["No"]</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="volunteerShirtSize">@L["VolunteerShirtSize"]</label>
+                        <select id="volunteerShirtSize"
+                                name="volunteerShirtSize"
+                                class="form-select"
+                                @bind="volunteer.ShirtSize">
+                            <option value="">@L["Select"]</option>
+                            <option value="AdultS">@L["AdultS"]</option>
+                            <option value="AdultM">@L["AdultM"]</option>
+                            <option value="AdultL">@L["AdultL"]</option>
+                            <option value="AdultXL">@L["AdultXL"]</option>
+                            <option value="AdultXXL">@L["AdultXXL"]</option>
+                        </select>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" @onclick="Submit">
+        @L["Submit"]
+    </button>
+
+</form>
+
+@code {
+    private bool isVolunteer;
+
+    private PlayerInfo player = new();
+    private ParentInfo parent = new();
+    private VolunteerInfo volunteer = new();
+
+    private List<Sibling> siblings = new();
+
+    private void AddSibling() => siblings.Add(new Sibling());
+
+    private void RemoveSibling(int index)
+    {
+        if (index >= 0 && index < siblings.Count)
+            siblings.RemoveAt(index);
+    }
+
+    private void Submit()
+    {
+        // Placeholder for now.
+        // Later: validate + post to API.
+    }
+
+    private class PlayerInfo
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Gender { get; set; }
+        public string? Town { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? ShirtSize { get; set; }
+    }
+
+    private class ParentInfo
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+    }
+
+    private class VolunteerInfo
+    {
+        public string? Role { get; set; }
+        public string? CriminalCheck { get; set; }
+        public string? ShirtSize { get; set; }
+    }
+
+    private class Sibling
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Gender { get; set; }
+        public string? Town { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? ShirtSize { get; set; }
+    }
+}
