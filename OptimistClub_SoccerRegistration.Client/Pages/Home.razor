@@ -4,8 +4,110 @@
 <div class="home-hero">
     <h1>@L["Title"]</h1>
     <p class="lead">@L["Home_Intro"]</p>
+</div>
+
+<div class="container mt-4">
+
+    <!-- Quick highlights -->
+    <div class="alert alert-info" role="region" aria-label="@L["Home_SeasonHighlights_Aria"]">
+        <h2 class="h4 m-0">@L["Home_SeasonHighlights_Title"]</h2>
+        <ul class="mb-0 mt-2">
+            <li><strong>@L["Home_Ages_Label"]</strong> @L["Home_Ages_Value"]</li>
+            <li><strong>@L["Home_PreschoolNote_Label"]</strong> @L["Home_PreschoolNote_Value"]</li>
+            <li><strong>@L["Home_Fee_Label"]</strong> @L["Home_Fee_Value"]</li>
+        </ul>
+    </div>
+
+    <!-- Registration information -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">@L["Home_RegistrationInfo_Title"]</h2>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>@L["Home_RegNights_Label"]</dt>
+                <dd>@L["Home_RegNights_Value"]</dd>
+
+                <dt>@L["Home_Time_Label"]</dt>
+                <dd>@L["Home_Time_Value"]</dd>
+
+                <dt>@L["Home_Location_Label"]</dt>
+                <dd>@L["Home_Location_Value"]</dd>
+
+                <dt>@L["Home_Fees_Label"]</dt>
+                <dd>
+                    <div>@L["Home_Fees_Main"]</div>
+                    <div>@L["Home_Fees_ThirdChild"]</div>
+                </dd>
+
+                <dt>@L["Home_Coach_Label"]</dt>
+                <dd>@L["Home_Coach_Value"]</dd>
+
+                <dt>@L["Home_Payment_Label"]</dt>
+                <dd>@L["Home_Payment_Value"]</dd>
+            </dl>
+
+            <div class="alert alert-warning mt-3" role="note">
+                <ul class="mb-0">
+                    <li>@L["Home_LateFee_Note"]</li>
+                    <li>@L["Home_Deadline_Note"]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- General season info -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">@L["Home_GeneralInfo_Title"]</h2>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>@L["Home_Email_Label"]</dt>
+                <dd>
+                    <a href="mailto:socceroptimistecass@gmail.com">socceroptimistecass@gmail.com</a>
+                </dd>
+
+                <dt>@L["Home_Facebook_Label"]</dt>
+                <dd>@L["Home_Facebook_Value"]</dd>
+
+                <dt>@L["Home_SeasonDuration_Label"]</dt>
+                <dd>@L["Home_SeasonDuration_Value"]</dd>
+
+                <dt>@L["Home_GameLocation_Label"]</dt>
+                <dd>
+                    <div>@L["Home_GameLocation_School"]</div>
+                    <div>@L["Home_GameLocation_Address"]</div>
+                    <div class="text-muted small">@L["Home_GameLocation_Note"]</div>
+                </dd>
+
+                <dt>@L["Home_GameTime_Label"]</dt>
+                <dd>
+                    <ul class="mb-0">
+                        <li>@L["Home_GameTime_2022"]</li>
+                        <li>@L["Home_GameTime_Other1"]</li>
+                        <li>@L["Home_GameTime_Other2"]</li>
+                    </ul>
+                </dd>
+
+                <dt>@L["Home_MandatoryEquipment_Label"]</dt>
+                <dd>
+                    <ul class="mb-0">
+                        <li>@L["Home_MandatoryEquipment_ShinPads"]</li>
+                        <li>@L["Home_MandatoryEquipment_Shoes"]</li>
+                    </ul>
+                </dd>
+            </dl>
+
+            <div class="alert alert-danger mt-3" role="note">
+                @L["Home_Cancellation_Note"]
+            </div>
+        </div>
+    </div>
+
 
     <NavLink class="btn btn-primary btn-lg mt-3" href="/register">
         @L["Register_Button"]
     </NavLink>
+
 </div>

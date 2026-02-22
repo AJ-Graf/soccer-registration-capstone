@@ -48,130 +48,179 @@
     <value>Please complete the form below to register a player.</value>
   </data>
 	<data name="Home_Intro">
-		<value>Welcome to the official Optimist soccer registration site.</value>
+		<value>Welcome to the Casselman Optimist Club soccer registration site.</value>
 	</data>
-	<data name="Register_Button">
-		<value>Register a player</value>
+	
+	<!--HOME PAGE CONTENT-->
+
+	<data name="Home_SeasonHighlights_Aria">
+		<value>Season highlights</value>
 	</data>
-	<data name="PlayerInfo">
-    <value>Player Information</value>
-  </data>
-  <data name="ParentInfo">
-    <value>Parent / Guardian Information</value>
-  </data>
-  <data name="SiblingInfo">
-    <value>Sibling Information</value>
-  </data>
-  <data name="VolunteerInfo">
-    <value>Volunteer Information</value>
-  </data>
 
-  <data name="FirstName">
-    <value>First Name</value>
-  </data>
-  <data name="LastName">
-    <value>Last Name</value>
-  </data>
+	<data name="Home_SeasonHighlights_Title">
+		<value>Recreational Soccer 2026</value>
+	</data>
 
-  <data name="Gender">
-    <value>Gender</value>
-  </data>
-  <data name="Male">
-    <value>Male</value>
-  </data>
-  <data name="Female">
-    <value>Female</value>
-  </data>
+	<data name="Home_Ages_Label">
+		<value>Ages:</value>
+	</data>
 
-  <data name="Town">
-    <value>Town / Village</value>
-  </data>
-  <data name="DateOfBirth">
-    <value>Date of Birth</value>
-  </data>
+	<data name="Home_Ages_Value">
+		<value>Preschool to Grade 8 (Birth years 2012 to 2021)</value>
+	</data>
 
-  <data name="ChildShirtSize">
-    <value>Child T-Shirt Size</value>
-  </data>
-  <data name="ChildXS">
-    <value>Child XS (4-5)</value>
-  </data>
-  <data name="ChildS">
-    <value>Child S (6)</value>
-  </data>
-  <data name="ChildM">
-    <value>Child M (7-8)</value>
-  </data>
-  <data name="ChildL">
-    <value>Child L (10-12)</value>
-  </data>
+	<data name="Home_PreschoolNote_Label">
+		<value>Preschool (2022):</value>
+	</data>
 
-  <data name="Important2022">
-    <value>Important: Children born in 2022 must have a parent practice with them on the field.</value>
-  </data>
+	<data name="Home_PreschoolNote_Value">
+		<value>A parent must assist their child on the field</value>
+	</data>
 
-  <data name="Phone">
-    <value>Phone Number</value>
-  </data>
-  <data name="Email">
-    <value>Email Address</value>
-  </data>
+	<data name="Home_Fee_Label">
+		<value>Fee:</value>
+	</data>
 
-  <data name="Sibling">
-    <value>Sibling</value>
-  </data>
-  <data name="AddSibling">
-    <value>+ Add another sibling</value>
-  </data>
+	<data name="Home_Fee_Value">
+		<value>$65 per child (includes jersey, shorts and socks). Free for the third child.</value>
+	</data>
 
-  <data name="VolunteerQuestion">
-    <value>I would like to volunteer as a coach or referee</value>
-  </data>
+	<data name="Home_RegistrationInfo_Title">
+		<value>Registration Information</value>
+	</data>
 
-  <data name="VolunteerRole">
-    <value>Volunteer Role</value>
-  </data>
-  <data name="Coach">
-    <value>Coach</value>
-  </data>
-  <data name="Referee">
-    <value>Referee</value>
-  </data>
+	<data name="Home_RegNights_Label">
+		<value>Registration nights:</value>
+	</data>
 
-  <data name="CriminalCheck">
-    <value>Permission to verify criminal record (vulnerable sector)</value>
-  </data>
+	<data name="Home_RegNights_Value">
+		<value>Thursday January 8 and Tuesday January 13, 2026</value>
+	</data>
 
-  <data name="VolunteerShirtSize">
-    <value>Volunteer T-Shirt Size</value>
-  </data>
+	<data name="Home_Time_Label">
+		<value>Time:</value>
+	</data>
 
-  <data name="AdultS">
-    <value>Adult S</value>
-  </data>
-  <data name="AdultM">
-    <value>Adult M</value>
-  </data>
-  <data name="AdultL">
-    <value>Adult L</value>
-  </data>
-  <data name="AdultXL">
-    <value>Adult XL</value>
-  </data>
-  <data name="AdultXXL">
-    <value>Adult XXL</value>
-  </data>
+	<data name="Home_Time_Value">
+		<value>6:00 PM to 8:00 PM</value>
+	</data>
 
-  <data name="Yes">
-    <value>Yes</value>
-  </data>
-  <data name="No">
-    <value>No</value>
-  </data>
-  <data name="Select">
-    <value>Select</value>
-  </data>
-  <data name="Submit">
-    <value>Submit Registration</value>
-  </data>
+	<data name="Home_Location_Label">
+		<value>Location:</value>
+	</data>
+
+	<data name="Home_Location_Value">
+		<value>Casselman Catholic High School</value>
+	</data>
+
+	<data name="Home_Fees_Label">
+		<value>Registration fees:</value>
+	</data>
+
+	<data name="Home_Fees_Main">
+		<value>$65.00 per child (includes full uniform: jersey, shorts, socks)</value>
+	</data>
+
+	<data name="Home_Fees_ThirdChild">
+		<value>Free for the third child</value>
+	</data>
+
+	<data name="Home_Coach_Label">
+		<value>Coach:</value>
+	</data>
+
+	<data name="Home_Coach_Value">
+		<value>1 child will be free</value>
+	</data>
+
+	<data name="Home_Payment_Label">
+		<value>Method of payment:</value>
+	</data>
+
+	<data name="Home_Payment_Value">
+		<value>Cash, cheque or debit card</value>
+	</data>
+
+	<data name="Home_LateFee_Note">
+		<value>Registrations received after January 16 will be charged a late fee of $20 per child.</value>
+	</data>
+
+	<data name="Home_Deadline_Note">
+		<value>No registrations will be accepted after January 31, 2026.</value>
+	</data>
+
+	<data name="Home_GeneralInfo_Title">
+		<value>General Information for the Season</value>
+	</data>
+
+	<data name="Home_Email_Label">
+		<value>Email:</value>
+	</data>
+
+	<data name="Home_Facebook_Label">
+		<value>Facebook:</value>
+	</data>
+
+	<data name="Home_Facebook_Value">
+		<value>Soccer Optimiste de Casselman (Please follow us on Facebook)</value>
+	</data>
+
+	<data name="Home_SeasonDuration_Label">
+		<value>Season duration:</value>
+	</data>
+
+	<data name="Home_SeasonDuration_Value">
+		<value>Every Monday from April 27 to June 15, 2026 (last Monday before the end of the school year)</value>
+	</data>
+
+	<data name="Home_GameLocation_Label">
+		<value>Game location:</value>
+	</data>
+
+	<data name="Home_GameLocation_School">
+		<value>Soccer fields at École secondaire catholique de Casselman</value>
+	</data>
+
+	<data name="Home_GameLocation_Address">
+		<value>778 rue Brébeuf, Casselman</value>
+	</data>
+
+	<data name="Home_GameLocation_Note">
+		<value>(track and field)</value>
+	</data>
+
+	<data name="Home_GameTime_Label">
+		<value>Game time:</value>
+	</data>
+
+	<data name="Home_GameTime_2022">
+		<value>6:00 PM to 6:45 PM (for 2022)</value>
+	</data>
+
+	<data name="Home_GameTime_Other1">
+		<value>6:00 PM to 7:00 PM (to be determined after registration)</value>
+	</data>
+
+	<data name="Home_GameTime_Other2">
+		<value>7:15 PM to 8:15 PM (to be determined after registration)</value>
+	</data>
+
+	<data name="Home_MandatoryEquipment_Label">
+		<value>Mandatory equipment:</value>
+	</data>
+
+	<data name="Home_MandatoryEquipment_ShinPads">
+		<value>Shin pads are mandatory for 2021+</value>
+	</data>
+
+	<data name="Home_MandatoryEquipment_Shoes">
+		<value>Soccer shoes with rubber spikes</value>
+	</data>
+
+	<data name="Home_Cancellation_Note">
+		<value>Any cancellation will be decided the same day by the Soccer Committee and posted on Facebook around 4:00 PM.</value>
+	</data>
+	
+	
+	
 </root>

@@ -4,8 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
-		<!-- 🔑 THIS IS THE MISSING PIECE -->
+		
 		<RootNamespace>OptimistClub_SoccerRegistration.Client</RootNamespace>
 
 		<!-- Required for dynamic culture switching -->
