@@ -20,13 +20,13 @@ namespace OptimistClub_SoccerRegistration.Data.Models
 
         public DateTime DateOfBirth { get; set; }
 
-        [StringLength(1)]
+        [StringLength(10)]
         public string? Gender { get; set; }
 
         [StringLength(50)]
         public string? Town { get; set; }
 
-        public string? MedicalInfo { get; set; }
+        public string? MedicalInfo { get; set; } // Medical info in not part of the form. This is left in but can be added as a form field in the future.
 
         [StringLength(10)]
         public string? ShirtSize { get; set; }

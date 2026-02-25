@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 
 namespace OptimistClub_SoccerRegistration.Data.Models
 {
+
+    // The fields role (Guardian or Parent), address, postal code, and city can be added later to the form since they are currently not in it
     public class Guardian
     {
         [Key]

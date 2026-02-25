@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using OptimistClub_SoccerRegistration.Components;
 using OptimistClub_SoccerRegistration.Components.Account;
 using OptimistClub_SoccerRegistration.Data;
+using OptimistClub_SoccerRegistration.Services;
 
 internal class Program
 {
@@ -37,6 +38,8 @@ internal class Program
             options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
         })
         .AddIdentityCookies();
+
+        builder.Services.AddScoped<IRegistrationService, RegistrationService>(); // Aaron - this registers the async methods from the two registration files under the Services folder
 
         // ✅ Database
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
