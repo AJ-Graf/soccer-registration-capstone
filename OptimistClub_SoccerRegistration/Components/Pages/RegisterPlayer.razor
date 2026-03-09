@@ -1,6 +1,9 @@
 ﻿@page "/register"
 
 @using Microsoft.Extensions.Localization
+@using OptimistClub_SoccerRegistration.Services
+@using OptimistClub_SoccerRegistration.Data.Models
+@inject IRegistrationService RegistrationService
 @inject IStringLocalizer<OptimistClub_SoccerRegistration.SharedResource> L
 
 <h2>@L["Title"]</h2>
@@ -146,51 +149,40 @@
 
             @if (siblings.Count == 0)
             {
-                <!-- Optional helper text; remove if you want ONLY the button -->
                 <p class="text-muted mb-3">@L["NoSiblingsAdded"]</p>
             }
 
             @for (int i = 0; i < siblings.Count; i++)
             {
+                var index = i;
+
                 <div class="border rounded p-3 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="text-muted mb-0">@L["Sibling"] @(i + 1)</h6>
+                        <h6 class="text-muted mb-0">@L["Sibling"] @(index + 1)</h6>
 
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm"
-                                @onclick="() => RemoveSibling(i)">
+                                @onclick="() => RemoveSibling(index)">
                             @L["RemoveSibling"]
                         </button>
                     </div>
 
-                    <!-- Same fields as Player Info -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label" for="siblingFirstName_@i">@L["FirstName"]</label>
-                            <input id="siblingFirstName_@i"
-                                   name="siblingFirstName_@i"
-                                   class="form-control"
-                                   autocomplete="given-name"
-                                   @bind="siblings[i].FirstName" />
+                            <label class="form-label">@L["FirstName"]</label>
+                            <input class="form-control" @bind="siblings[index].FirstName" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label" for="siblingLastName_@i">@L["LastName"]</label>
-                            <input id="siblingLastName_@i"
-                                   name="siblingLastName_@i"
-                                   class="form-control"
-                                   autocomplete="family-name"
-                                   @bind="siblings[i].LastName" />
+                            <label class="form-label">@L["LastName"]</label>
+                            <input class="form-control" @bind="siblings[index].LastName" />
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingGender_@i">@L["Gender"]</label>
-                            <select id="siblingGender_@i"
-                                    name="siblingGender_@i"
-                                    class="form-select"
-                                    @bind="siblings[i].Gender">
+                            <label class="form-label">@L["Gender"]</label>
+                            <select class="form-select" @bind="siblings[index].Gender">
                                 <option value="">@L["Select"]</option>
                                 <option value="Male">@L["Male"]</option>
                                 <option value="Female">@L["Female"]</option>
@@ -198,31 +190,21 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingTown_@i">@L["Town"]</label>
-                            <input id="siblingTown_@i"
-                                   name="siblingTown_@i"
-                                   class="form-control"
-                                   autocomplete="address-level2"
-                                   @bind="siblings[i].Town" />
+                            <label class="form-label">@L["Town"]</label>
+                            <input class="form-control" @bind="siblings[index].Town" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingDob_@i">@L["DateOfBirth"]</label>
-                            <input id="siblingDob_@i"
-                                   name="siblingDob_@i"
-                                   type="date"
-                                   class="form-control"
-                                   @bind="siblings[i].DateOfBirth"
+                            <label class="form-label">@L["DateOfBirth"]</label>
+                            <input type="date" class="form-control"
+                                   @bind="siblings[index].DateOfBirth"
                                    @bind:format="yyyy-MM-dd" />
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="siblingShirtSize_@i">@L["ChildShirtSize"]</label>
-                        <select id="siblingShirtSize_@i"
-                                name="siblingShirtSize_@i"
-                                class="form-select"
-                                @bind="siblings[i].ShirtSize">
+                        <label class="form-label">@L["ChildShirtSize"]</label>
+                        <select class="form-select" @bind="siblings[index].ShirtSize">
                             <option value="">@L["Select"]</option>
                             <option value="ChildXS">@L["ChildXS"]</option>
                             <option value="ChildS">@L["ChildS"]</option>
@@ -307,19 +289,42 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary" @onclick="Submit">
-        @L["Submit"]
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <button type="button" class="btn btn-primary" @onclick="Submit" disabled="@isSubmitting">
+        @if (isSubmitting)
+        {
+            <span>Saving...</span>
+        }
+        else
+        {
+            @L["Submit"]
+        }
     </button>
+
+    @* <button type="button" class="btn btn-primary" @onclick="Submit">
+        @L["Submit"]
+    </button> *@
 
 </form>
 
 @code {
     private bool isVolunteer;
+    private bool isSubmitting;
+    private string? successMessage;
+    private string? errorMessage;
 
     private PlayerInfo player = new();
     private ParentInfo parent = new();
     private VolunteerInfo volunteer = new();
-
     private List<Sibling> siblings = new();
 
     private void AddSibling() => siblings.Add(new Sibling());
@@ -330,10 +335,80 @@
             siblings.RemoveAt(index);
     }
 
-    private void Submit()
+    private async Task Submit()
     {
-        // Placeholder for now.
-        // Later: validate + post to API.
+        try
+        {
+            isSubmitting = true;
+            errorMessage = null;
+
+            var guardian = new Guardian
+            {
+                FirstName = parent.FirstName ?? string.Empty,
+                LastName = parent.LastName ?? string.Empty,
+                PhoneNumber = parent.Phone,
+                Email = parent.Email
+            };
+            await RegistrationService.CreateGuardianAsync(guardian);
+
+            var newPlayer = new Player
+            {
+                GuardianId = guardian.GuardianId,
+                FirstName = player.FirstName ?? string.Empty,
+                LastName = player.LastName ?? string.Empty,
+                DateOfBirth = player.DateOfBirth ?? DateTime.Today,
+                Gender = player.Gender,
+                Town = player.Town,
+                ShirtSize = player.ShirtSize
+            };
+            await RegistrationService.CreatePlayerAsync(newPlayer);
+
+            foreach (var sib in siblings)
+            {
+                var sibPlayer = new Player
+                {
+                    GuardianId = guardian.GuardianId,
+                    FirstName = sib.FirstName ?? string.Empty,
+                    LastName = sib.LastName ?? string.Empty,
+                    DateOfBirth = sib.DateOfBirth ?? DateTime.Today,
+                    Gender = sib.Gender,
+                    Town = sib.Town,
+                    ShirtSize = sib.ShirtSize
+                };
+                await RegistrationService.CreatePlayerAsync(sibPlayer);
+            }
+
+            if (isVolunteer)
+            {
+                var vol = new Volunteer
+                {
+                    GuardianId = guardian.GuardianId,
+                    FirstName = parent.FirstName ?? string.Empty,
+                    LastName = parent.LastName ?? string.Empty,
+                    Role = volunteer.Role,
+                    ShirtSize = volunteer.ShirtSize,
+                    CriminalCheckCompleted = volunteer.CriminalCheck == "Yes"
+                };
+                await RegistrationService.CreateVolunteerAsync(vol);
+            }
+
+            successMessage = "You have completed the registration form.";
+            player = new();
+            parent = new();
+            volunteer = new();
+            siblings.Clear();
+            isVolunteer = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.InnerException?.InnerException?.Message
+                ?? ex.InnerException?.Message
+                ?? ex.Message;
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
     }
 
     private class PlayerInfo

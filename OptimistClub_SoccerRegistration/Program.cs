@@ -39,7 +39,8 @@ internal class Program
         })
         .AddIdentityCookies();
 
-        builder.Services.AddScoped<IRegistrationService, RegistrationService>(); // Aaron - this registers the async methods from the two registration files under the Services folder
+        builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+        builder.Services.AddScoped<IVolunteerService, VolunteerService>();
 
         // ✅ Database
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")

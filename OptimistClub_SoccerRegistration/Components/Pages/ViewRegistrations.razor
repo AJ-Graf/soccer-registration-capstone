@@ -1,0 +1,89 @@
+﻿@page "/view-registrations"
+@using Microsoft.EntityFrameworkCore
+@using OptimistClub_SoccerRegistration.Data
+@using OptimistClub_SoccerRegistration.Data.Models
+@inject ApplicationDbContext Context
+
+<h3>Registrations</h3>
+
+@if (players == null)
+{
+    <p>Loading...</p>
+}
+else if (players.Count == 0)
+{
+    <p>No registrations yet.</p>
+}
+else
+{
+    <h4>Players (@players.Count)</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Town</th>
+                <th>Shirt</th>
+                <th>Parent</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in players)
+            {
+                <tr>
+                    <td>@p.FirstName @p.LastName</td>
+                    <td>@p.DateOfBirth.ToShortDateString()</td>
+                    <td>@p.Gender</td>
+                    <td>@p.Town</td>
+                    <td>@p.ShirtSize</td>
+                    <td>@p.Guardian?.FirstName @p.Guardian?.LastName</td>
+                    <td>@p.Guardian?.Email</td>
+                    <td>@p.Guardian?.PhoneNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (volunteers.Count > 0)
+    {
+        <h4>Volunteers (@volunteers.Count)</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Criminal Check</th>
+                    <th>Shirt</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in volunteers)
+                {
+                    <tr>
+                        <td>@v.FirstName @v.LastName</td>
+                        <td>@v.Role</td>
+                        <td>@(v.CriminalCheckCompleted ? "Yes" : "No")</td>
+                        <td>@v.ShirtSize</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private List<Player>? players;
+    private List<Volunteer> volunteers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        players = await Context.Players
+            .Include(p => p.Guardian)
+            .ToListAsync();
+
+        volunteers = await Context.Volunteers.ToListAsync();
+    }
+}

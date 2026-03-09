@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore; // Aaron - this code is used to define how the methods from IRegistration work
+using Microsoft.EntityFrameworkCore; 
 using OptimistClub_SoccerRegistration.Data;
 using OptimistClub_SoccerRegistration.Data.Models;
 

@@ -26,7 +26,7 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(50)]
         public string? Town { get; set; }
 
-        public string? MedicalInfo { get; set; } // Medical info in not part of the form. This is left in but can be added as a form field in the future.
+        public string? MedicalInfo { get; set; } 
 
         [StringLength(10)]
         public string? ShirtSize { get; set; }

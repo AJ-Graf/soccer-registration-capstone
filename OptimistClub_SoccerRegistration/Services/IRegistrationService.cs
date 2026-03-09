@@ -1,4 +1,4 @@
-﻿using OptimistClub_SoccerRegistration.Data.Models; // Aaron - this code is meant to define methods resembling the tables in the database
+﻿using OptimistClub_SoccerRegistration.Data.Models; 
 
 namespace OptimistClub_SoccerRegistration.Services
 {
