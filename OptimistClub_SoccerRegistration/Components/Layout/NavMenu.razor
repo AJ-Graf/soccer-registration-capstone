@@ -38,6 +38,11 @@
                     @context.User.Identity?.Name
                 </NavLink>
 
+                <NavLink class="nav-link" href="/view-registrations">
+                    <span class="bi bi-list-check-nav-menu"></span>
+                    View Registrations
+                </NavLink>
+
                 <form action="/Account/Logout" method="post" class="px-3">
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />

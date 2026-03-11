@@ -93,7 +93,8 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            // After successful login always go to account/manage
+            RedirectManager.RedirectTo("Account/Manage");
         }
         else if (result.RequiresTwoFactor)
         {

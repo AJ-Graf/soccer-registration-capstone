@@ -98,16 +98,26 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+
+	<data name="Intro">
+		<value>Veuillez remplir le formulaire ci-dessous pour inscrire un joueur.</value>
+	</data>
 	<data name="Register_Button">
 		<value>Enregistrer un(e) joueur(euse)</value>
 	</data>
-
+	<data name="Title">
+		<value>Inscription au soccer</value>
+	</data>
 	<data name="PlayerInfo">
 		<value>Information sur le/la joueur(euse)</value>
 	</data>
 	<data name="ParentInfo">
 		<value>Information sur le parent / tuteur</value>
 	</data>
+	<data name="MandatoryFields">
+		<value>Assurez-vous que tous les champs obligatoires sont remplis</value>
+	</data>
+	
 	<data name="NoSiblingsAdded">
 		<value>Aucun frère ou soeur a été ajouté(e). Cliquez sur « Ajouter un frère ou une soeur » si applicable.</value>
 	</data>
@@ -179,6 +189,9 @@
 		<value>Supprimer le frère ou la soeur</value>
 	</data>
 
+	<data name="VolunteerText">
+		<value>Pour la réussite de ce programme, nous avons besoin de bénévoles. Aucune expérience est nécessaire comme entraîneur(e) ou arbitre. Une session de formation sera donnée gratuitement en début d’avril pour les arbitres et entraîneurs(es).</value>
+	</data>
 	<data name="VolunteerQuestion">
 		<value>Je souhaite faire du bénévolat comme entraîneur ou arbitre</value>
 	</data>
@@ -194,7 +207,7 @@
 	</data>
 
 	<data name="CriminalCheck">
-		<value>Autorisation de vérification du casier judiciaire (secteur vulnérable)</value>
+		<value>Autorisation de vérification du casier judiciaire (secteur vulnérable) au besoin</value>
 	</data>
 
 	<data name="VolunteerShirtSize">
@@ -228,4 +241,106 @@
 	<data name="Submit">
 		<value>Soumettre l’inscription</value>
 	</data>
+	<data name="WaiverTitle">
+		<value>Décharge et consentement</value>
+	</data>
+
+	<data name="WaiverIntro">
+		<value>Veuillez lire attentivement les renseignements suivants avant de soumettre le formulaire d'inscription.</value>
+	</data>
+
+	<data name="Waiver_Insurance">
+		<value>Assurance-accident : Chaque participant inscrit devra posséder des assurances personnelles. Il est entendu que les parents acceptent tous les risques d’accident qui peuvent se produire durant la saison de soccer et les activités connexes.</value>
+	</data>
+
+	<data name="Waiver_Volunteers">
+		<value>Votre compréhension et votre patience seront grandement appréciées envers nos bénévoles et entraîneurs.</value>
+	</data>
+
+	<data name="Waiver_ParentPresence">
+		<value>Pour les enfants de 8 ans et moins, la présence d’un parent, d’un tuteur ou d’une tutrice est OBLIGATOIRE en tout temps durant les joutes.</value>
+	</data>
+
+	<data name="Waiver_Activity">
+		<value>La saison organisée par le Club Optimiste de Casselman est une activité où le plaisir est au rendez-vous et non une compétition. Aucun signe d’agressivité ne sera toléré.</value>
+	</data>
+
+	<data name="Waiver_AuthorizePlay">
+		<value>Par la présente, j’autorise mon enfant à jouer au soccer les lundis à partir de la fin avril jusqu’à la fin juin 2026 entre 18 h 00 et 20 h 15, selon son année de naissance.</value>
+	</data>
+
+	<data name="Waiver_Release">
+		<value>Je renonce à tenir responsables tous les membres du Club Optimiste de Casselman, ainsi que tous les bénévoles participants, et je consens à les exonérer de toute responsabilité faisant suite aux activités du club de soccer.</value>
+	</data>
+
+	<data name="Waiver_ShareInfo">
+		<value>J’autorise le comité du soccer optimiste à partager l’information inscrite sur le formulaire d’inscription avec le coach bénévole qui aura la charge de l’équipe de mon ou mes enfant(s).</value>
+	</data>
+
+	<data name="ElectronicSignature">
+		<value>Signature électronique</value>
+	</data>
+
+	<data name="ElectronicSignatureHelp">
+		<value>Veuillez inscrire le nom complet du parent, du tuteur ou de la tutrice comme confirmation électronique.</value>
+	</data>
+
+	<data name="WaiverCheckbox">
+		<value>J’ai lu et j’accepte les conditions de la décharge et du consentement ci-dessus.</value>
+	</data>
+
+	<data name="Saving">
+		<value>Enregistrement en cours...</value>
+	</data>
+
+	<!-- Messages de validation -->
+	<data name="Validation_FirstNameRequired">
+		<value>Le prénom est obligatoire.</value>
+	</data>
+	<data name="Validation_LastNameRequired">
+		<value>Le nom de famille est obligatoire.</value>
+	</data>
+	<data name="Validation_GenderRequired">
+		<value>Le sexe est obligatoire.</value>
+	</data>
+	<data name="Validation_DateOfBirthRequired">
+		<value>La date de naissance est obligatoire.</value>
+	</data>
+	<data name="Validation_ChildShirtSizeRequired">
+		<value>La grandeur du t-shirt de l'enfant est obligatoire.</value>
+	</data>
+	<data name="Validation_PhoneRequired">
+		<value>Le numéro de téléphone est obligatoire.</value>
+	</data>
+	<data name="Validation_EmailRequired">
+		<value>L'adresse courriel est obligatoire.</value>
+	</data>
+	<data name="Validation_EmailInvalid">
+		<value>Veuillez entrer une adresse courriel valide.</value>
+	</data>
+	<data name="Validation_ElectronicSignatureRequired">
+		<value>La signature électronique est obligatoire.</value>
+	</data>
+	<data name="Validation_WaiverAcceptanceRequired">
+		<value>Vous devez accepter la décharge pour continuer.</value>
+	</data>
+	<data name="Validation_VolunteerRoleRequired">
+		<value>Le rôle du bénévole est obligatoire.</value>
+	</data>
+	<data name="Validation_CriminalCheckRequired">
+		<value>La sélection pour la vérification du casier judiciaire est obligatoire.</value>
+	</data>
+	<data name="Validation_VolunteerShirtSizeRequired">
+		<value>La grandeur du t-shirt du bénévole est obligatoire.</value>
+	</data>
+	<data name="Validation_SiblingFirstNameRequired">
+		<value>Frère ou sœur {0}: le prénom est obligatoire.</value>
+	</data>
+	<data name="Validation_SiblingLastNameRequired">
+		<value>Frère ou sœur {0}: le nom de famille est obligatoire.</value>
+	</data>
+	<data name="Validation_SiblingDateOfBirthRequired">
+		<value>Frère ou sœur {0}: la date de naissance est obligatoire.</value>
+	</data>
+
 </root>

@@ -15,7 +15,6 @@ namespace OptimistClub_SoccerRegistration.Components.Account
             MaxAge = TimeSpan.FromSeconds(5),
         };
 
-        [DoesNotReturn]
         public void RedirectTo(string? uri)
         {
             uri ??= "";
@@ -26,13 +25,18 @@ namespace OptimistClub_SoccerRegistration.Components.Account
                 uri = navigationManager.ToBaseRelativePath(uri);
             }
 
-            // During static rendering, NavigateTo throws a NavigationException which is handled by the framework as a redirect.
-            // So as long as this is called from a statically rendered Identity component, the InvalidOperationException is never thrown.
-            navigationManager.NavigateTo(uri);
-            throw new InvalidOperationException($"{nameof(IdentityRedirectManager)} can only be used during static rendering.");
+            try
+            {
+                navigationManager.NavigateTo(uri);
+            }
+            catch (Exception ex) when (ex.GetType().FullName == "Microsoft.AspNetCore.Components.NavigationException")
+            {
+                // During static rendering, NavigateTo throws a NavigationException which the framework handles as a redirect.
+                // Re-throw so the framework will treat it as a redirect during static rendering.
+                throw;
+            }
         }
 
-        [DoesNotReturn]
         public void RedirectTo(string uri, Dictionary<string, object?> queryParameters)
         {
             var uriWithoutQuery = navigationManager.ToAbsoluteUri(uri).GetLeftPart(UriPartial.Path);
@@ -40,7 +44,6 @@ namespace OptimistClub_SoccerRegistration.Components.Account
             RedirectTo(newUri);
         }
 
-        [DoesNotReturn]
         public void RedirectToWithStatus(string uri, string message, HttpContext context)
         {
             context.Response.Cookies.Append(StatusCookieName, message, StatusCookieBuilder.Build(context));
@@ -49,10 +52,8 @@ namespace OptimistClub_SoccerRegistration.Components.Account
 
         private string CurrentPath => navigationManager.ToAbsoluteUri(navigationManager.Uri).GetLeftPart(UriPartial.Path);
 
-        [DoesNotReturn]
         public void RedirectToCurrentPage() => RedirectTo(CurrentPath);
 
-        [DoesNotReturn]
         public void RedirectToCurrentPageWithStatus(string message, HttpContext context)
             => RedirectToWithStatus(CurrentPath, message, context);
     }

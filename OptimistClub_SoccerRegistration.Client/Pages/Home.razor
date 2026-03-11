@@ -1,54 +1,75 @@
 ﻿@page "/"
 @inject IStringLocalizer<App> L
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
 
-<div class="home-hero">
-    <h1>@L["Title"]</h1>
-    <p class="lead">@L["Home_Intro"]</p>
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@L["Success"]:</strong> @successMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="home-hero mb-4">
+    <div class="container home-content">
+        <h1 class="display-5 fw-semibold">@L["Title"]</h1>
+        <p class="lead mb-3">@L["Home_Intro"]</p>
+
+        <NavLink class="btn btn-primary btn-lg mt-3"
+                 href="/register"
+                 aria-label="@L["Register_Button"]">
+            @L["Register_Button"]
+        </NavLink>
+    </div>
 </div>
 
-<div class="container mt-4">
+<div class="container home-content">
 
-    <!-- Quick highlights -->
-    <div class="alert alert-info" role="region" aria-label="@L["Home_SeasonHighlights_Aria"]">
-        <h2 class="h4 m-0">@L["Home_SeasonHighlights_Title"]</h2>
-        <ul class="mb-0 mt-2">
-            <li><strong>@L["Home_Ages_Label"]</strong> @L["Home_Ages_Value"]</li>
-            <li><strong>@L["Home_PreschoolNote_Label"]</strong> @L["Home_PreschoolNote_Value"]</li>
-            <li><strong>@L["Home_Fee_Label"]</strong> @L["Home_Fee_Value"]</li>
-        </ul>
+    <!-- Season highlights -->
+    <div class="card border-info mb-4" role="region" aria-label="@L["Home_SeasonHighlights_Aria"]">
+        <div class="card-body">
+            <h2 class="h4 mb-3">@L["Home_SeasonHighlights_Title"]</h2>
+            <ul class="mb-0 ps-3">
+                <li><strong>@L["Home_Ages_Label"]</strong> @L["Home_Ages_Value"]</li>
+                <li><strong>@L["Home_PreschoolNote_Label"]</strong> @L["Home_PreschoolNote_Value"]</li>
+                <li><strong>@L["Home_Fee_Label"]</strong> @L["Home_Fee_Value"]</li>
+                <li><strong>@L["Home_Coach_Label"]</strong>@L["Home_Coach_Value"]</li>
+                <li><strong>@L["Home_Referee_Label"]</strong>@L["Home_Referee_Value"]</li>
+            </ul>
+        </div>
     </div>
 
     <!-- Registration information -->
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h2 class="panel-title">@L["Home_RegistrationInfo_Title"]</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h4 mb-0">@L["Home_RegistrationInfo_Title"]</h2>
         </div>
-        <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>@L["Home_RegNights_Label"]</dt>
-                <dd>@L["Home_RegNights_Value"]</dd>
+        <div class="card-body">
 
-                <dt>@L["Home_Time_Label"]</dt>
-                <dd>@L["Home_Time_Value"]</dd>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_RegNights_Label"]</div>
+                <div class="col-md-9">@L["Home_RegNights_Value"]</div>
+            </div>
 
-                <dt>@L["Home_Location_Label"]</dt>
-                <dd>@L["Home_Location_Value"]</dd>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_Time_Label"]</div>
+                <div class="col-md-9">@L["Home_Time_Value"]</div>
+            </div>
 
-                <dt>@L["Home_Fees_Label"]</dt>
-                <dd>
-                    <div>@L["Home_Fees_Main"]</div>
-                    <div>@L["Home_Fees_ThirdChild"]</div>
-                </dd>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_Location_Label"]</div>
+                <div class="col-md-9">@L["Home_Location_Value"]</div>
+            </div>
+            
+            <div class="row mb-0">
+                <div class="col-md-3 fw-semibold">@L["Home_Payment_Label"]</div>
+                <div class="col-md-9">@L["Home_Payment_Value"]</div>
+            </div>
 
-                <dt>@L["Home_Coach_Label"]</dt>
-                <dd>@L["Home_Coach_Value"]</dd>
-
-                <dt>@L["Home_Payment_Label"]</dt>
-                <dd>@L["Home_Payment_Value"]</dd>
-            </dl>
-
-            <div class="alert alert-warning mt-3" role="note">
-                <ul class="mb-0">
+            <div class="alert alert-warning mt-4 mb-0" role="note" aria-label="@L["Home_ImportantDeadlines_Aria"]">
+                <h3 class="h6 fw-bold mb-2">@L["Home_ImportantDeadlines_Title"]</h3>
+                <ul class="mb-0 ps-3">
                     <li>@L["Home_LateFee_Note"]</li>
                     <li>@L["Home_Deadline_Note"]</li>
                 </ul>
@@ -56,58 +77,121 @@
         </div>
     </div>
 
-    <!-- General season info -->
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h2 class="panel-title">@L["Home_GeneralInfo_Title"]</h2>
+    <!-- General season information -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h4 mb-0">@L["Home_GeneralInfo_Title"]</h2>
         </div>
-        <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>@L["Home_Email_Label"]</dt>
-                <dd>
+        <div class="card-body">
+
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_Email_Label"]</div>
+                <div class="col-md-9">
                     <a href="mailto:socceroptimistecass@gmail.com">socceroptimistecass@gmail.com</a>
-                </dd>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">
+                    @L["Home_Facebook_Label"]
+                </div>
 
-                <dt>@L["Home_Facebook_Label"]</dt>
-                <dd>@L["Home_Facebook_Value"]</dd>
+                <div class="col-md-9">
+                    <a href="https://facebook.com/socceroptimistecass"
+                       target="_blank"
+                       rel="noopener"
+                       aria-label="@L["Home_Facebook_Value"]">
+                        Optimiste de Casselman
+                    </a>
+                    <div class="small text-muted">
+                        @L["Home_Facebook_Value"]
+                    </div>
+                </div>
+            </div>
 
-                <dt>@L["Home_SeasonDuration_Label"]</dt>
-                <dd>@L["Home_SeasonDuration_Value"]</dd>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_SeasonDuration_Label"]</div>
+                <div class="col-md-9">@L["Home_SeasonDuration_Value"]</div>
+            </div>
 
-                <dt>@L["Home_GameLocation_Label"]</dt>
-                <dd>
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_GameLocation_Label"]</div>
+                <div class="col-md-9">
                     <div>@L["Home_GameLocation_School"]</div>
                     <div>@L["Home_GameLocation_Address"]</div>
                     <div class="text-muted small">@L["Home_GameLocation_Note"]</div>
-                </dd>
+                </div>
+            </div>
 
-                <dt>@L["Home_GameTime_Label"]</dt>
-                <dd>
-                    <ul class="mb-0">
+            <div class="row mb-3">
+                <div class="col-md-3 fw-semibold">@L["Home_GameTime_Label"]</div>
+                <div class="col-md-9">
+                    <ul class="mb-0 ps-3">
                         <li>@L["Home_GameTime_2022"]</li>
                         <li>@L["Home_GameTime_Other1"]</li>
                         <li>@L["Home_GameTime_Other2"]</li>
                     </ul>
-                </dd>
+                </div>
+            </div>
 
-                <dt>@L["Home_MandatoryEquipment_Label"]</dt>
-                <dd>
-                    <ul class="mb-0">
+            <div class="row mb-0">
+                <div class="col-md-3 fw-semibold">@L["Home_MandatoryEquipment_Label"]</div>
+                <div class="col-md-9">
+                    <ul class="mb-0 ps-3">
                         <li>@L["Home_MandatoryEquipment_ShinPads"]</li>
                         <li>@L["Home_MandatoryEquipment_Shoes"]</li>
                     </ul>
-                </dd>
-            </dl>
+                </div>
+            </div>
 
-            <div class="alert alert-danger mt-3" role="note">
-                @L["Home_Cancellation_Note"]
+            <div class="alert alert-danger mt-4 mb-0" role="note" aria-label="@L["Home_Cancellation_Aria"]">
+                <h3 class="h6 fw-bold mb-2">@L["Home_Cancellation_Title"]</h3>
+                <p class="mb-0">@L["Home_Cancellation_Note"]</p>
             </div>
         </div>
     </div>
+    </div>
 
+@code {
+    private string? successMessage;
+    private CancellationTokenSource? dismissalCts;
 
-    <NavLink class="btn btn-primary btn-lg mt-3" href="/register">
-        @L["Register_Button"]
-    </NavLink>
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.Uri;
+        var uriBuilder = new UriBuilder(uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        successMessage = query["success"];
 
-</div>
+        if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            // Auto-dismiss after 5 seconds
+            dismissalCts = new CancellationTokenSource();
+            _ = DismissMessageAsync();
+        }
+    }
+
+    private async Task DismissMessageAsync()
+    {
+        if (dismissalCts == null)
+            return;
+
+        try
+        {
+            await Task.Delay(5000, dismissalCts.Token);
+            successMessage = null;
+            StateHasChanged();
+
+            // Clean up query parameter
+            NavigationManager.NavigateTo("/");
+        }
+        catch (OperationCanceledException)
+        {
+            // Dismissal was cancelled
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        dismissalCts?.Dispose();
+    }
+}
