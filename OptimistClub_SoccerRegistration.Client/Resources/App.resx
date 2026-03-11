@@ -44,9 +44,7 @@
   <data name="Title">
     <value>Soccer Registration</value>
   </data>
-  <data name="Intro">
-    <value>Please complete the form below to register a player.</value>
-  </data>
+ 
 	<data name="Home_Intro">
 		<value>Welcome to the Casselman Optimist Club soccer registration site.</value>
 	</data>
@@ -86,7 +84,7 @@
 	</data>
 
 	<data name="Home_RegistrationInfo_Title">
-		<value>Registration Information</value>
+		<value>Registration Information (in person)</value>
 	</data>
 
 	<data name="Home_RegNights_Label">
@@ -117,20 +115,21 @@
 		<value>Registration fees:</value>
 	</data>
 
-	<data name="Home_Fees_Main">
-		<value>$65.00 per child (includes full uniform: jersey, shorts, socks)</value>
-	</data>
-
-	<data name="Home_Fees_ThirdChild">
-		<value>Free for the third child</value>
-	</data>
-
+		
 	<data name="Home_Coach_Label">
 		<value>Coach:</value>
 	</data>
 
 	<data name="Home_Coach_Value">
-		<value>1 child will be free</value>
+		<value>One child per volunteer coach receives free registration</value>
+	</data>
+	
+	<data name="Home_Referee_Label">
+		<value>Referee:</value>
+	</data>
+
+	<data name="Home_Referee_Value">
+		<value>Only required for late games (7:15pm to 8:15pm)</value>
 	</data>
 
 	<data name="Home_Payment_Label">
@@ -138,7 +137,7 @@
 	</data>
 
 	<data name="Home_Payment_Value">
-		<value>Cash, cheque or debit card</value>
+		<value>Cash, cheque or E-transfer</value>
 	</data>
 
 	<data name="Home_LateFee_Note">
@@ -162,7 +161,7 @@
 	</data>
 
 	<data name="Home_Facebook_Value">
-		<value>Soccer Optimiste de Casselman (Please follow us on Facebook)</value>
+		<value>Visit the Club Optimiste de Casselman Facebook page</value>
 	</data>
 
 	<data name="Home_SeasonDuration_Label">
@@ -220,6 +219,24 @@
 	<data name="Home_Cancellation_Note">
 		<value>Any cancellation will be decided the same day by the Soccer Committee and posted on Facebook around 4:00 PM.</value>
 	</data>
+	<data name="Register_Button">
+		<value>Register a player</value>
+	</data>
+	<data name="Home_ImportantDeadlines_Title">
+  <value>Important registration deadlines</value>
+</data>
+
+<data name="Home_ImportantDeadlines_Aria">
+  <value>Important registration deadlines and late fee notices</value>
+</data>
+
+<data name="Home_Cancellation_Title">
+  <value>Weather and cancellation notice</value>
+</data>
+
+<data name="Home_Cancellation_Aria">
+  <value>Weather and cancellation information</value>
+</data>
 	
 	
 	

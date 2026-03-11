@@ -1,10 +1,14 @@
 ﻿@page "/register"
 
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.Extensions.Localization
 @using OptimistClub_SoccerRegistration.Services
 @using OptimistClub_SoccerRegistration.Data.Models
 @inject IRegistrationService RegistrationService
 @inject IStringLocalizer<OptimistClub_SoccerRegistration.SharedResource> L
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <h2>@L["Title"]</h2>
 
@@ -12,7 +16,44 @@
     @L["Intro"]
 </p>
 
-<form>
+<EditForm Model="model" OnValidSubmit="Submit" OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+
+    <!-- Consolidated Validation Alert -->
+    @if (showMandatoryFieldsWarning && validationErrors.Any())
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+                <div>
+                    <strong>@L["MandatoryFields"]</strong>
+                    <ul class="mb-0 mt-2 ps-3">
+                        @foreach (var error in validationErrors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> @errorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success:</strong> @successMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <!-- PLAYER INFORMATION -->
     <div class="card mb-4">
@@ -21,35 +62,38 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="playerFirstName">@L["FirstName"]</label>
+                   <label class="form-label" for="playerFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
                     <input id="playerFirstName"
                            name="playerFirstName"
                            class="form-control"
                            autocomplete="given-name"
-                           @bind="player.FirstName" />
+                           @bind="model.Player.FirstName" />
+                    <ValidationMessage For="@(() => model.Player.FirstName)" />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="playerLastName">@L["LastName"]</label>
+                   <label class="form-label" for="playerLastName">@L["LastName"] <span class="text-danger">*</span></label>
                     <input id="playerLastName"
                            name="playerLastName"
                            class="form-control"
                            autocomplete="family-name"
-                           @bind="player.LastName" />
+                           @bind="model.Player.LastName" />
+                    <ValidationMessage For="@(() => model.Player.LastName)" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label class="form-label" for="playerGender">@L["Gender"]</label>
+                   <label class="form-label" for="playerGender">@L["Gender"] <span class="text-danger">*</span></label>
                     <select id="playerGender"
                             name="playerGender"
                             class="form-select"
-                            @bind="player.Gender">
+                            @bind="model.Player.Gender">
                         <option value="">@L["Select"]</option>
                         <option value="Male">@L["Male"]</option>
                         <option value="Female">@L["Female"]</option>
                     </select>
+                    <ValidationMessage For="@(() => model.Player.Gender)" />
                 </div>
 
                 <div class="col-md-4 mb-3">
@@ -58,32 +102,34 @@
                            name="playerTown"
                            class="form-control"
                            autocomplete="address-level2"
-                           @bind="player.Town" />
+                           @bind="model.Player.Town" />
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label" for="playerDob">@L["DateOfBirth"]</label>
+                   <label class="form-label" for="playerDob">@L["DateOfBirth"] <span class="text-danger">*</span></label>
                     <input id="playerDob"
                            name="playerDob"
                            type="date"
                            class="form-control"
-                           @bind="player.DateOfBirth"
+                           @bind="model.Player.DateOfBirth"
                            @bind:format="yyyy-MM-dd" />
+                    <ValidationMessage For="@(() => model.Player.DateOfBirth)" />
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="playerShirtSize">@L["ChildShirtSize"]</label>
+               <label class="form-label" for="playerShirtSize">@L["ChildShirtSize"] <span class="text-danger">*</span></label>
                 <select id="playerShirtSize"
                         name="playerShirtSize"
                         class="form-select"
-                        @bind="player.ShirtSize">
+                        @bind="model.Player.ShirtSize">
                     <option value="">@L["Select"]</option>
                     <option value="ChildXS">@L["ChildXS"]</option>
                     <option value="ChildS">@L["ChildS"]</option>
                     <option value="ChildM">@L["ChildM"]</option>
                     <option value="ChildL">@L["ChildL"]</option>
                 </select>
+                <ValidationMessage For="@(() => model.Player.ShirtSize)" />
             </div>
 
             <div class="alert alert-warning">
@@ -100,43 +146,47 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="parentFirstName">@L["FirstName"]</label>
+                   <label class="form-label" for="parentFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
                     <input id="parentFirstName"
                            name="parentFirstName"
                            class="form-control"
                            autocomplete="given-name"
-                           @bind="parent.FirstName" />
+                           @bind="model.Parent.FirstName" />
+                    <ValidationMessage For="@(() => model.Parent.FirstName)" />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label" for="parentLastName">@L["LastName"]</label>
+                   <label class="form-label" for="parentLastName">@L["LastName"] <span class="text-danger">*</span></label>
                     <input id="parentLastName"
                            name="parentLastName"
                            class="form-control"
                            autocomplete="family-name"
-                           @bind="parent.LastName" />
+                           @bind="model.Parent.LastName" />
+                    <ValidationMessage For="@(() => model.Parent.LastName)" />
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="parentPhone">@L["Phone"]</label>
+               <label class="form-label" for="parentPhone">@L["Phone"] <span class="text-danger">*</span></label>
                 <input id="parentPhone"
                        name="parentPhone"
                        class="form-control"
                        autocomplete="tel"
                        inputmode="tel"
-                       @bind="parent.Phone" />
+                       @bind="model.Parent.Phone" />
+                <ValidationMessage For="@(() => model.Parent.Phone)" />
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="parentEmail">@L["Email"]</label>
+               <label class="form-label" for="parentEmail">@L["Email"] <span class="text-danger">*</span></label>
                 <input id="parentEmail"
                        name="parentEmail"
                        type="email"
                        class="form-control"
                        autocomplete="email"
                        inputmode="email"
-                       @bind="parent.Email" />
+                       @bind="model.Parent.Email" />
+                <ValidationMessage For="@(() => model.Parent.Email)" />
             </div>
 
         </div>
@@ -147,12 +197,12 @@
         <div class="card-header">@L["SiblingInfo"]</div>
         <div class="card-body">
 
-            @if (siblings.Count == 0)
+            @if (model.Siblings.Count == 0)
             {
                 <p class="text-muted mb-3">@L["NoSiblingsAdded"]</p>
             }
 
-            @for (int i = 0; i < siblings.Count; i++)
+            @for (int i = 0; i < model.Siblings.Count; i++)
             {
                 var index = i;
 
@@ -162,6 +212,7 @@
 
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm"
+                                aria-label="@($"{L["RemoveSibling"]} {index + 1}")"
                                 @onclick="() => RemoveSibling(index)">
                             @L["RemoveSibling"]
                         </button>
@@ -169,20 +220,33 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">@L["FirstName"]</label>
-                            <input class="form-control" @bind="siblings[index].FirstName" />
+                            <label class="form-label" for="siblingFirstName_@index">@L["FirstName"]</label>
+                            <input id="siblingFirstName_@index"
+                                   name="siblingFirstName_@index"
+                                   class="form-control"
+                                   autocomplete="given-name"
+                                   @bind="model.Siblings[index].FirstName" />
+                            <ValidationMessage For="@(() => model.Siblings[index].FirstName)" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">@L["LastName"]</label>
-                            <input class="form-control" @bind="siblings[index].LastName" />
+                            <label class="form-label" for="siblingLastName_@index">@L["LastName"]</label>
+                            <input id="siblingLastName_@index"
+                                   name="siblingLastName_@index"
+                                   class="form-control"
+                                   autocomplete="family-name"
+                                   @bind="model.Siblings[index].LastName" />
+                            <ValidationMessage For="@(() => model.Siblings[index].LastName)" />
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L["Gender"]</label>
-                            <select class="form-select" @bind="siblings[index].Gender">
+                            <label class="form-label" for="siblingGender_@index">@L["Gender"]</label>
+                            <select id="siblingGender_@index"
+                                    name="siblingGender_@index"
+                                    class="form-select"
+                                    @bind="model.Siblings[index].Gender">
                                 <option value="">@L["Select"]</option>
                                 <option value="Male">@L["Male"]</option>
                                 <option value="Female">@L["Female"]</option>
@@ -190,27 +254,39 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L["Town"]</label>
-                            <input class="form-control" @bind="siblings[index].Town" />
+                            <label class="form-label" for="siblingTown_@index">@L["Town"]</label>
+                            <input id="siblingTown_@index"
+                                   name="siblingTown_@index"
+                                   class="form-control"
+                                   autocomplete="address-level2"
+                                   @bind="model.Siblings[index].Town" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">@L["DateOfBirth"]</label>
-                            <input type="date" class="form-control"
-                                   @bind="siblings[index].DateOfBirth"
+                            <label class="form-label" for="siblingDob_@index">@L["DateOfBirth"]</label>
+                            <input id="siblingDob_@index"
+                                   name="siblingDob_@index"
+                                   type="date"
+                                   class="form-control"
+                                   @bind="model.Siblings[index].DateOfBirth"
                                    @bind:format="yyyy-MM-dd" />
+                            <ValidationMessage For="@(() => model.Siblings[index].DateOfBirth)" />
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">@L["ChildShirtSize"]</label>
-                        <select class="form-select" @bind="siblings[index].ShirtSize">
+                        <label class="form-label" for="siblingShirtSize_@index">@L["ChildShirtSize"]</label>
+                        <select id="siblingShirtSize_@index"
+                                name="siblingShirtSize_@index"
+                                class="form-select"
+                                @bind="model.Siblings[index].ShirtSize">
                             <option value="">@L["Select"]</option>
                             <option value="ChildXS">@L["ChildXS"]</option>
                             <option value="ChildS">@L["ChildS"]</option>
                             <option value="ChildM">@L["ChildM"]</option>
                             <option value="ChildL">@L["ChildL"]</option>
                         </select>
+                        <ValidationMessage For="@(() => model.Siblings[index].ShirtSize)" />
                     </div>
                 </div>
             }
@@ -220,7 +296,6 @@
                     @onclick="AddSibling">
                 @L["AddSibling"]
             </button>
-
         </div>
     </div>
 
@@ -228,53 +303,58 @@
     <div class="card mb-4">
         <div class="card-header">@L["VolunteerInfo"]</div>
         <div class="card-body">
+            <p class="text-muted">
+                @L["VolunteerText"]
+            </p>
 
             <div class="form-check mb-3">
                 <input id="volunteerToggle"
                        class="form-check-input"
                        type="checkbox"
-                       @bind="isVolunteer"
+                       @bind="model.IsVolunteer"
                        @bind:event="onchange"
-                       aria-expanded="@isVolunteer.ToString().ToLowerInvariant()"
+                       aria-expanded="@model.IsVolunteer.ToString().ToLowerInvariant()"
                        aria-controls="volunteerDetails" />
                 <label class="form-check-label" for="volunteerToggle">
                     @L["VolunteerQuestion"]
                 </label>
             </div>
 
-            @if (isVolunteer)
+            @if (model.IsVolunteer)
             {
                 <div id="volunteerDetails">
                     <div class="mb-3">
-                        <label class="form-label" for="volunteerRole">@L["VolunteerRole"]</label>
+                       <label class="form-label" for="volunteerRole">@L["VolunteerRole"] <span class="text-danger">*</span></label>
                         <select id="volunteerRole"
                                 name="volunteerRole"
                                 class="form-select"
-                                @bind="volunteer.Role">
+                                @bind="model.Volunteer.Role">
                             <option value="">@L["Select"]</option>
                             <option value="Coach">@L["Coach"]</option>
                             <option value="Referee">@L["Referee"]</option>
                         </select>
+                        <ValidationMessage For="@(() => model.Volunteer.Role)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="criminalCheck">@L["CriminalCheck"]</label>
+                       <label class="form-label" for="criminalCheck">@L["CriminalCheck"] <span class="text-danger">*</span></label>
                         <select id="criminalCheck"
                                 name="criminalCheck"
                                 class="form-select"
-                                @bind="volunteer.CriminalCheck">
+                                @bind="model.Volunteer.CriminalCheck">
                             <option value="">@L["Select"]</option>
                             <option value="Yes">@L["Yes"]</option>
                             <option value="No">@L["No"]</option>
                         </select>
+                        <ValidationMessage For="@(() => model.Volunteer.CriminalCheck)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="volunteerShirtSize">@L["VolunteerShirtSize"]</label>
+                       <label class="form-label" for="volunteerShirtSize">@L["VolunteerShirtSize"] <span class="text-danger">*</span></label>
                         <select id="volunteerShirtSize"
                                 name="volunteerShirtSize"
                                 class="form-select"
-                                @bind="volunteer.ShirtSize">
+                                @bind="model.Volunteer.ShirtSize">
                             <option value="">@L["Select"]</option>
                             <option value="AdultS">@L["AdultS"]</option>
                             <option value="AdultM">@L["AdultM"]</option>
@@ -282,57 +362,102 @@
                             <option value="AdultXL">@L["AdultXL"]</option>
                             <option value="AdultXXL">@L["AdultXXL"]</option>
                         </select>
+                        <ValidationMessage For="@(() => model.Volunteer.ShirtSize)" />
                     </div>
                 </div>
             }
-
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(successMessage))
-    {
-        <div class="alert alert-success">@successMessage</div>
-    }
+    <!-- WAIVER / CONSENT -->
+    <div class="card mb-4">
+        <div class="card-header">@L["WaiverTitle"]</div>
+        <div class="card-body">
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
+            <p class="text-muted">
+                @L["WaiverIntro"]
+            </p>
 
-    <button type="button" class="btn btn-primary" @onclick="Submit" disabled="@isSubmitting">
+            <div class="border rounded p-3 mb-3 bg-light">
+                <ol class="mb-3 ps-3">
+                    <li class="mb-2">@L["Waiver_Insurance"]</li>
+                    <li class="mb-2">@L["Waiver_Volunteers"]</li>
+                    <li class="mb-2">@L["Waiver_ParentPresence"]</li>
+                    <li class="mb-2">@L["Waiver_Activity"]</li>
+                </ol>
+
+                <p class="mb-2">@L["Waiver_AuthorizePlay"]</p>
+                <p class="mb-2">@L["Waiver_Release"]</p>
+                
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="electronicSignature">
+                    @L["ElectronicSignature"] <span class="text-danger">*</span>
+                </label>
+                <input id="electronicSignature"
+                       name="electronicSignature"
+                       class="form-control"
+                       @bind="model.ElectronicSignature"
+                       autocomplete="name" />             
+             </div>
+
+            <div class="form-check">
+                <input id="waiverAccepted"
+                       class="form-check-input"
+                       type="checkbox"
+                       @bind="model.WaiverAccepted" />
+                <label class="form-check-label" for="waiverAccepted">
+                   @L["WaiverCheckbox"] <span class="text-danger">*</span>
+                </label>                
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
         @if (isSubmitting)
         {
-            <span>Saving...</span>
+           <span>@L["Saving"]</span>
         }
         else
         {
             @L["Submit"]
         }
     </button>
-
-    @* <button type="button" class="btn btn-primary" @onclick="Submit">
-        @L["Submit"]
-    </button> *@
-
-</form>
+</EditForm>
 
 @code {
-    private bool isVolunteer;
     private bool isSubmitting;
+    private bool showMandatoryFieldsWarning;
     private string? successMessage;
     private string? errorMessage;
+    private DateTime? waiverAcceptedOn;
+    private List<string> validationErrors = new();
 
-    private PlayerInfo player = new();
-    private ParentInfo parent = new();
-    private VolunteerInfo volunteer = new();
-    private List<Sibling> siblings = new();
+    private RegistrationPageModel model = new();
 
-    private void AddSibling() => siblings.Add(new Sibling());
+    private void AddSibling() => model.Siblings.Add(new SiblingInfo());
 
     private void RemoveSibling(int index)
     {
-        if (index >= 0 && index < siblings.Count)
-            siblings.RemoveAt(index);
+        if (index >= 0 && index < model.Siblings.Count)
+            model.Siblings.RemoveAt(index);
+    }
+
+    private async Task HandleInvalidSubmit()
+    {
+        showMandatoryFieldsWarning = true;
+
+        // Collect all validation errors
+        var context = new ValidationContext(model);
+        context.Items["Localizer"] = L;
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(model, context, results, true);
+
+        validationErrors = results.Select(r => r.ErrorMessage).ToList();
+
+        // Scroll to top of page
+        await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 
     private async Task Submit()
@@ -341,30 +466,45 @@
         {
             isSubmitting = true;
             errorMessage = null;
+            successMessage = null;
+            showMandatoryFieldsWarning = false;
+
+            waiverAcceptedOn = DateTime.Now;
 
             var guardian = new Guardian
             {
-                FirstName = parent.FirstName ?? string.Empty,
-                LastName = parent.LastName ?? string.Empty,
-                PhoneNumber = parent.Phone,
-                Email = parent.Email
+                FirstName = model.Parent.FirstName ?? string.Empty,
+                LastName = model.Parent.LastName ?? string.Empty,
+                PhoneNumber = model.Parent.Phone,
+                Email = model.Parent.Email
             };
             await RegistrationService.CreateGuardianAsync(guardian);
 
             var newPlayer = new Player
             {
                 GuardianId = guardian.GuardianId,
-                FirstName = player.FirstName ?? string.Empty,
-                LastName = player.LastName ?? string.Empty,
-                DateOfBirth = player.DateOfBirth ?? DateTime.Today,
-                Gender = player.Gender,
-                Town = player.Town,
-                ShirtSize = player.ShirtSize
+                FirstName = model.Player.FirstName ?? string.Empty,
+                LastName = model.Player.LastName ?? string.Empty,
+                DateOfBirth = model.Player.DateOfBirth ?? DateTime.Today,
+                Gender = model.Player.Gender,
+                Town = model.Player.Town,
+                ShirtSize = model.Player.ShirtSize
             };
             await RegistrationService.CreatePlayerAsync(newPlayer);
 
-            foreach (var sib in siblings)
+            foreach (var sib in model.Siblings)
             {
+                var anyValueEntered =
+                    !string.IsNullOrWhiteSpace(sib.FirstName) ||
+                    !string.IsNullOrWhiteSpace(sib.LastName) ||
+                    !string.IsNullOrWhiteSpace(sib.Gender) ||
+                    !string.IsNullOrWhiteSpace(sib.Town) ||
+                    sib.DateOfBirth.HasValue ||
+                    !string.IsNullOrWhiteSpace(sib.ShirtSize);
+
+                if (!anyValueEntered)
+                    continue;
+
                 var sibPlayer = new Player
                 {
                     GuardianId = guardian.GuardianId,
@@ -378,26 +518,27 @@
                 await RegistrationService.CreatePlayerAsync(sibPlayer);
             }
 
-            if (isVolunteer)
+            if (model.IsVolunteer)
             {
                 var vol = new Volunteer
                 {
                     GuardianId = guardian.GuardianId,
-                    FirstName = parent.FirstName ?? string.Empty,
-                    LastName = parent.LastName ?? string.Empty,
-                    Role = volunteer.Role,
-                    ShirtSize = volunteer.ShirtSize,
-                    CriminalCheckCompleted = volunteer.CriminalCheck == "Yes"
+                    FirstName = model.Parent.FirstName ?? string.Empty,
+                    LastName = model.Parent.LastName ?? string.Empty,
+                    Role = model.Volunteer.Role,
+                    ShirtSize = model.Volunteer.ShirtSize,
+                    CriminalCheckCompleted = model.Volunteer.CriminalCheck == "Yes"
                 };
                 await RegistrationService.CreateVolunteerAsync(vol);
             }
 
-            successMessage = "You have completed the registration form.";
-            player = new();
-            parent = new();
-            volunteer = new();
-            siblings.Clear();
-            isVolunteer = false;
+            successMessage = L["RegistrationComplete"];
+            model = new RegistrationPageModel();
+            waiverAcceptedOn = null;
+            
+            // Redirect to home page after 2 seconds
+            await Task.Delay(2000);
+            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
@@ -408,6 +549,185 @@
         finally
         {
             isSubmitting = false;
+        }
+    }
+
+    private class RegistrationPageModel : IValidatableObject
+    {
+        public PlayerInfo Player { get; set; } = new();
+        public ParentInfo Parent { get; set; } = new();
+        public VolunteerInfo Volunteer { get; set; } = new();
+        public List<SiblingInfo> Siblings { get; set; } = new();
+
+        public string? ElectronicSignature { get; set; }
+        public bool WaiverAccepted { get; set; }
+        public bool IsVolunteer { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Get the localizer from context
+            var localizer = validationContext.Items.ContainsKey("Localizer") 
+                ? validationContext.Items["Localizer"] as IStringLocalizer<SharedResource> 
+                : null;
+
+            // Validate Player Info
+            if (string.IsNullOrWhiteSpace(Player.FirstName))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_FirstNameRequired"] ?? "First name is required.",
+                    new[] { nameof(Player.FirstName) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Player.LastName))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_LastNameRequired"] ?? "Last name is required.",
+                    new[] { nameof(Player.LastName) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Player.Gender))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_GenderRequired"] ?? "Gender is required.",
+                    new[] { nameof(Player.Gender) });
+            }
+
+            if (Player.DateOfBirth == null)
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_DateOfBirthRequired"] ?? "Date of birth is required.",
+                    new[] { nameof(Player.DateOfBirth) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Player.ShirtSize))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_ChildShirtSizeRequired"] ?? "Child shirt size is required.",
+                    new[] { nameof(Player.ShirtSize) });
+            }
+
+            // Validate Parent Info
+            if (string.IsNullOrWhiteSpace(Parent.FirstName))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_FirstNameRequired"] ?? "First name is required.",
+                    new[] { nameof(Parent.FirstName) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Parent.LastName))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_LastNameRequired"] ?? "Last name is required.",
+                    new[] { nameof(Parent.LastName) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Parent.Phone))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_PhoneRequired"] ?? "Phone number is required.",
+                    new[] { nameof(Parent.Phone) });
+            }
+
+            if (string.IsNullOrWhiteSpace(Parent.Email))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_EmailRequired"] ?? "Email is required.",
+                    new[] { nameof(Parent.Email) });
+            }
+            else if (!Parent.Email.Contains("@"))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_EmailInvalid"] ?? "Enter a valid email address.",
+                    new[] { nameof(Parent.Email) });
+            }
+
+            // Validate Electronic Signature
+            if (string.IsNullOrWhiteSpace(ElectronicSignature))
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_ElectronicSignatureRequired"] ?? "Electronic signature is required.",
+                    new[] { nameof(ElectronicSignature) });
+            }
+
+            // Validate Waiver Accepted
+            if (!WaiverAccepted)
+            {
+                yield return new ValidationResult(
+                    localizer?["Validation_WaiverAcceptanceRequired"] ?? "You must accept the waiver to continue.",
+                    new[] { nameof(WaiverAccepted) });
+            }
+
+            // Validate Volunteer Info
+            if (IsVolunteer)
+            {
+                if (string.IsNullOrWhiteSpace(Volunteer.Role))
+                {
+                    yield return new ValidationResult(
+                        localizer?["Validation_VolunteerRoleRequired"] ?? "Volunteer role is required.",
+                        new[] { "Volunteer.Role" });
+                }
+
+                if (string.IsNullOrWhiteSpace(Volunteer.CriminalCheck))
+                {
+                    yield return new ValidationResult(
+                        localizer?["Validation_CriminalCheckRequired"] ?? "Criminal check selection is required.",
+                        new[] { "Volunteer.CriminalCheck" });
+                }
+
+                if (string.IsNullOrWhiteSpace(Volunteer.ShirtSize))
+                {
+                    yield return new ValidationResult(
+                        localizer?["Validation_VolunteerShirtSizeRequired"] ?? "Volunteer shirt size is required.",
+                        new[] { "Volunteer.ShirtSize" });
+                }
+            }
+
+            // Validate Siblings
+            for (int i = 0; i < Siblings.Count; i++)
+            {
+                var sib = Siblings[i];
+
+                var anyValueEntered =
+                    !string.IsNullOrWhiteSpace(sib.FirstName) ||
+                    !string.IsNullOrWhiteSpace(sib.LastName) ||
+                    !string.IsNullOrWhiteSpace(sib.Gender) ||
+                    !string.IsNullOrWhiteSpace(sib.Town) ||
+                    sib.DateOfBirth.HasValue ||
+                    !string.IsNullOrWhiteSpace(sib.ShirtSize);
+
+                if (anyValueEntered)
+                {
+                    if (string.IsNullOrWhiteSpace(sib.FirstName))
+                    {
+                        var sibNum = i + 1;
+                        yield return new ValidationResult(
+                            string.Format(
+                                localizer?["Validation_SiblingFirstNameRequired"] ?? "Sibling {0}: first name is required.",
+                                sibNum),
+                            new[] { $"Siblings[{i}].FirstName" });
+                    }
+
+                    if (string.IsNullOrWhiteSpace(sib.LastName))
+                    {
+                        var sibNum = i + 1;
+                        yield return new ValidationResult(
+                            string.Format(
+                                localizer?["Validation_SiblingLastNameRequired"] ?? "Sibling {0}: last name is required.",
+                                sibNum),
+                            new[] { $"Siblings[{i}].LastName" });
+                    }
+
+                    if (!sib.DateOfBirth.HasValue)
+                    {
+                        var sibNum = i + 1;
+                        yield return new ValidationResult(
+                            string.Format(
+                                localizer?["Validation_SiblingDateOfBirthRequired"] ?? "Sibling {0}: date of birth is required.",
+                                sibNum),
+                            new[] { $"Siblings[{i}].DateOfBirth" });
+                    }
+                }
+            }
         }
     }
 
@@ -436,7 +756,7 @@
         public string? ShirtSize { get; set; }
     }
 
-    private class Sibling
+    private class SiblingInfo
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

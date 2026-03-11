@@ -99,14 +99,24 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 
+	<data name="Intro">
+		<value>Please complete the form below to register a player.</value>
+	</data>
 	<data name="Register_Button">
 		<value>Register a player</value>
+	</data>
+
+	<data name="Title">
+		<value>Soccer Registration</value>
 	</data>
 	<data name="PlayerInfo">
 		<value>Player Information</value>
 	</data>
 	<data name="ParentInfo">
 		<value>Parent / Guardian Information</value>
+	</data>
+	<data name="MandatoryFields">
+		<value>Ensure all mandatory fields are filled out</value>
 	</data>
 	<data name="NoSiblingsAdded">
 		<value>No siblings have been added yet. Click "Add Sibling" if applicable.</value>
@@ -180,6 +190,9 @@
 		<value>Remove sibling</value>
 	</data>
 
+	<data name="VolunteerText">
+		<value>Volunteers are necessary if we want to succeed with our Soccer club. Experience is not required to be a Coach or Referee. A training session will be given free of charge in April for all Coaches or Referees regardless of your experience.</value>
+	</data>
 	<data name="VolunteerQuestion">
 		<value>I would like to volunteer as a coach or referee</value>
 	</data>
@@ -195,7 +208,7 @@
 	</data>
 
 	<data name="CriminalCheck">
-		<value>Permission to verify criminal record (vulnerable sector)</value>
+		<value>Permission to verify criminal record (vulnerable sector) if needed</value>
 	</data>
 
 	<data name="VolunteerShirtSize">
@@ -230,5 +243,180 @@
 	<data name="Submit">
 		<value>Submit Registration</value>
 	</data>
+
+	<data name="WaiverTitle">
+		<value>Waiver and Consent</value>
+	</data>
+
+	<data name="WaiverIntro">
+		<value>Please read the following waiver and consent information carefully before submitting the registration form.</value>
+	</data>
+
+	<data name="Waiver_Insurance">
+		<value>Accident Insurance: Each registered participant must have their own personal insurance. Parents or guardians understand and accept all accident risks that may occur during the soccer season and related activities.</value>
+	</data>
+
+	<data name="Waiver_Volunteers">
+		<value>Your understanding and patience toward our volunteer coaches will be greatly appreciated.</value>
+	</data>
+
+	<data name="Waiver_ParentPresence">
+		<value>For all children 8 years of age and under, the presence of a parent or guardian is always mandatory.</value>
+	</data>
+
+	<data name="Waiver_Activity">
+		<value>The soccer season organized by the Optimist Club of Casselman is intended to be an activity where fun comes before competition. No signs of aggression will be tolerated.</value>
+	</data>
+
+	<data name="Waiver_AuthorizePlay">
+		<value>By submitting this form, I authorize my child to play soccer on Mondays from the end of April to the end of June between 6:00 PM and 8:15 PM.</value>
+	</data>
+
+	<data name="Waiver_Release">
+		<value>I waive all responsibility from the members of the Optimist Club of Casselman and all participating volunteers, and I release them from liability during soccer activities.</value>
+	</data>
+
+	<data name="Waiver_ShareInfo">
+		<value>I authorize the Soccer Committee to share the information provided on this registration form with the volunteer coach responsible for my child during the season.</value>
+	</data>
+
+	<data name="ElectronicSignature">
+		<value>Electronic signature</value>
+	</data>
 	
+	<data name="WaiverCheckbox">
+		<value>I have read and agree to the waiver and consent terms above.</value>
+	</data>
+
+		<data name="RegistrationComplete">
+		<value>You have completed the registration form.</value>
+	</data>
+
+	<data name="Saving">
+		<value>Saving...</value>
+	</data>
+
+	<!-- Validation Messages -->
+	<data name="Validation_FirstNameRequired">
+		<value>First name is required.</value>
+	</data>
+	<data name="Validation_LastNameRequired">
+		<value>Last name is required.</value>
+	</data>
+	<data name="Validation_GenderRequired">
+		<value>Gender is required.</value>
+	</data>
+	<data name="Validation_DateOfBirthRequired">
+		<value>Date of birth is required.</value>
+	</data>
+	<data name="Validation_ChildShirtSizeRequired">
+		<value>Child shirt size is required.</value>
+	</data>
+	<data name="Validation_PhoneRequired">
+		<value>Phone number is required.</value>
+	</data>
+	<data name="Validation_EmailRequired">
+		<value>Email is required.</value>
+	</data>
+	<data name="Validation_EmailInvalid">
+		<value>Enter a valid email address.</value>
+	</data>
+	<data name="Validation_ElectronicSignatureRequired">
+		<value>Electronic signature is required.</value>
+	</data>
+	<data name="Validation_WaiverAcceptanceRequired">
+		<value>You must accept the waiver to continue.</value>
+	</data>
+	<data name="Validation_VolunteerRoleRequired">
+		<value>Volunteer role is required.</value>
+	</data>
+	<data name="Validation_CriminalCheckRequired">
+		<value>Criminal check selection is required.</value>
+	</data>
+	<data name="Validation_VolunteerShirtSizeRequired">
+		<value>Volunteer shirt size is required.</value>
+	</data>
+	<data name="Validation_SiblingFirstNameRequired">
+		<value>Sibling {0}: first name is required.</value>
+	</data>
+	<data name="Validation_SiblingLastNameRequired">
+		<value>Sibling {0}: last name is required.</value>
+	</data>
+	<data name="Validation_SiblingDateOfBirthRequired">
+		<value>Sibling {0}: date of birth is required.</value>
+	</data>
+
+	<data name="RequiredFieldsMissing">
+		<value>Please complete all required player and parent/guardian fields before submitting the registration.</value>
+	</data>
+
+	<data name="VolunteerFieldsRequired">
+		<value>Please complete all volunteer fields before submitting the registration.</value>
+	</data>
+
+	<data name="Validation_FirstNameRequired">
+		<value>First name is required.</value>
+	</data>
+
+	<data name="Validation_LastNameRequired">
+		<value>Last name is required.</value>
+	</data>
+
+	<data name="Validation_GenderRequired">
+		<value>Gender is required.</value>
+	</data>
+
+	<data name="Validation_DobRequired">
+		<value>Date of birth is required.</value>
+	</data>
+
+	<data name="Validation_ChildShirtSizeRequired">
+		<value>Child shirt size is required.</value>
+	</data>
+
+	<data name="Validation_PhoneRequired">
+		<value>Phone number is required.</value>
+	</data>
+
+	<data name="Validation_EmailRequired">
+		<value>Email is required.</value>
+	</data>
+
+	<data name="Validation_EmailInvalid">
+		<value>Please enter a valid email address.</value>
+	</data>
+
+	<data name="Validation_VolunteerRoleRequired">
+		<value>Volunteer role is required.</value>
+	</data>
+
+	<data name="Validation_CriminalCheckRequired">
+		<value>Criminal check selection is required.</value>
+	</data>
+
+	<data name="Validation_VolunteerShirtSizeRequired">
+		<value>Volunteer shirt size is required.</value>
+	</data>
+
+	<data name="Validation_SiblingFirstNameRequired">
+		<value>Sibling {0}: first name is required.</value>
+	</data>
+
+	<data name="Validation_SiblingLastNameRequired">
+		<value>Sibling {0}: last name is required.</value>
+	</data>
+
+	<data name="Validation_SiblingDobRequired">
+		<value>Sibling {0}: date of birth is required.</value>
+	</data>
+
+	<data name="Validation_ElectronicSignatureRequired">
+		<value>Electronic signature is required.</value>
+	</data>
+
+	<data name="Validation_WaiverRequired">
+		<value>You must accept the waiver before submitting the registration.</value>
+	</data>
+
+
 </root>

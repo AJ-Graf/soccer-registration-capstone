@@ -44,9 +44,7 @@
 	<data name="Title">
 		<value>Inscription au soccer</value>
 	</data>
-	<data name="Intro">
-		<value>Veuillez remplir le formulaire ci-dessous pour inscrire un joueur.</value>
-	</data>
+	
 	<data name="Home_Intro">
 		<value>Bienvenue sur le site d’inscription pour le soccer Optimiste de Casselman</value>
 	</data>
@@ -85,7 +83,7 @@
 	</data>
 
 	<data name="Home_RegistrationInfo_Title">
-		<value>Information d'inscription</value>
+		<value>Information d'inscription (en personne)</value>
 	</data>
 
 	<data name="Home_RegNights_Label">
@@ -101,7 +99,7 @@
 	</data>
 
 	<data name="Home_Time_Value">
-		<value>18 h à 20 h</value>
+		<value>18h à 20h</value>
 	</data>
 
 	<data name="Home_Location_Label">
@@ -115,21 +113,21 @@
 	<data name="Home_Fees_Label">
 		<value>Frais d'inscription :</value>
 	</data>
-
-	<data name="Home_Fees_Main">
-		<value>65,00 $ par enfant (inclut l’uniforme complet : chandail, short, bas)</value>
-	</data>
-
-	<data name="Home_Fees_ThirdChild">
-		<value>Gratuit pour le troisième enfant</value>
-	</data>
-
+	
 	<data name="Home_Coach_Label">
 		<value>Entraîneur :</value>
 	</data>
 
 	<data name="Home_Coach_Value">
-		<value>1 enfant sera gratuit</value>
+		<value>Un enfant par entraîneur bénévole sera inscrit gratuitement.</value>
+	</data>
+
+	<data name="Home_Referee_Label">
+		<value>Arbitre:</value>
+	</data>
+
+	<data name="Home_Referee_Value">
+		<value>Seulement requis pour les matchs tardifs (19h15 à 20h15)</value>
 	</data>
 
 	<data name="Home_Payment_Label">
@@ -137,7 +135,7 @@
 	</data>
 
 	<data name="Home_Payment_Value">
-		<value>Argent comptant, chèque ou carte de débit</value>
+		<value>Argent comptant, chèque ou virement électronique</value>
 	</data>
 
 	<data name="Home_LateFee_Note">
@@ -161,7 +159,7 @@
 	</data>
 
 	<data name="Home_Facebook_Value">
-		<value>Soccer Optimiste de Casselman (Suivez-nous sur Facebook)</value>
+		<value>Visitez la page Facebook du Club Optimiste de Casselman</value>
 	</data>
 
 	<data name="Home_SeasonDuration_Label">
@@ -193,15 +191,15 @@
 	</data>
 
 	<data name="Home_GameTime_2022">
-		<value>18 h à 18 h 45 (pour 2022)</value>
+		<value>18h à 18h45 (pour 2022)</value>
 	</data>
 
 	<data name="Home_GameTime_Other1">
-		<value>18 h à 19 h (à déterminer après l'inscription)</value>
+		<value>18h à 19h (à déterminer après l'inscription)</value>
 	</data>
 
 	<data name="Home_GameTime_Other2">
-		<value>19 h 15 à 20 h 15 (à déterminer après l'inscription)</value>
+		<value>19h15 à 20h15 (à déterminer après l'inscription)</value>
 	</data>
 
 	<data name="Home_MandatoryEquipment_Label">
@@ -217,7 +215,24 @@
 	</data>
 
 	<data name="Home_Cancellation_Note">
-		<value>Toute annulation sera décidée le jour même par le comité de soccer et publiée sur Facebook vers 16 h.</value>
+		<value>Toute annulation sera décidée le jour même par le comité de soccer et publiée sur Facebook vers 16h.</value>
 	</data>
-	
+	<data name="Register_Button">
+		<value>Enregistrer un(e) joueur(euse)</value>
+	</data>
+	<data name="Home_ImportantDeadlines_Title">
+		<value>Dates importantes pour l'inscription</value>
+	</data>
+
+	<data name="Home_ImportantDeadlines_Aria">
+		<value>Dates importantes pour l'inscription et avis de frais de retard</value>
+	</data>
+
+	<data name="Home_Cancellation_Title">
+		<value>Avis concernant la météo et les annulations</value>
+	</data>
+
+	<data name="Home_Cancellation_Aria">
+		<value>Information concernant les conditions météorologiques et les annulations</value>
+	</data>
 </root>
