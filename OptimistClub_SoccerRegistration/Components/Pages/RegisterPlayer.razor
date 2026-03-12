@@ -476,7 +476,10 @@
                 FirstName = model.Parent.FirstName ?? string.Empty,
                 LastName = model.Parent.LastName ?? string.Empty,
                 PhoneNumber = model.Parent.Phone,
-                Email = model.Parent.Email
+                Email = model.Parent.Email,
+                ElectronicSignature = model.ElectronicSignature,
+                WaiverAccepted = model.WaiverAccepted,
+                WaiverAcceptedOn = DateTime.Now
             };
             await RegistrationService.CreateGuardianAsync(guardian);
 

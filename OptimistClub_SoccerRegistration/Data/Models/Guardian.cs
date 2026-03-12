@@ -22,10 +22,10 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(25)]
         public string? Role { get; set; }  
 
-        [StringLength(11)]
+        [StringLength(20)]
         public string? PhoneNumber { get; set; }
 
-        [StringLength(30)]
+        [StringLength(75)]
         public string? Email { get; set; }
 
         [StringLength(50)]
@@ -37,7 +37,15 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(7)]
         public string? PostalCode { get; set; }
 
+        [StringLength(50)]
+        public string? ElectronicSignature { get; set; }
+
+        public bool WaiverAccepted { get; set; }
+
+        public DateTime? WaiverAcceptedOn { get; set; }
+
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
+
 
         public ApplicationUser? User { get; set; }
         public ICollection<Player> Players { get; set; } = new List<Player>();
