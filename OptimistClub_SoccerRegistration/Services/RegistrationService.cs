@@ -20,11 +20,11 @@ namespace OptimistClub_SoccerRegistration.Services
             return player;
         }
 
-        public async Task<Guardian> CreateGuardianAsync(Guardian guardian)
+        public async Task<Parent> CreateParentAsync(Parent parent)
         {
-            _context.Guardians.Add(guardian);
+            _context.Parents.Add(parent);
             await _context.SaveChangesAsync();
-            return guardian;
+            return parent;
         }
 
         public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer)

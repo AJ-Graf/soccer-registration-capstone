@@ -10,7 +10,7 @@ using OptimistClub_SoccerRegistration.Services;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -55,13 +55,22 @@ internal class Program
         {
             options.SignIn.RequireConfirmedAccount = true;
         })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddSignInManager()
-        .AddDefaultTokenProviders();
+
+   .AddRoles<IdentityRole>()
+   .AddEntityFrameworkStores<ApplicationDbContext>()
+   .AddSignInManager()
+   .AddDefaultTokenProviders();
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
         var app = builder.Build();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+
+            await SeedData.InitializeAsync(services);
+        }
 
         // ✅ Supported cultures
         var supportedCultures = new[]
@@ -142,6 +151,6 @@ internal class Program
         // ✅ fallback (kept)
         app.MapFallbackToFile("index.html");
 
-        app.Run();
+        await app.RunAsync();
     }
 }

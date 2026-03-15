@@ -8,7 +8,7 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [Key]
         public int PlayerId { get; set; }
 
-        public int GuardianId { get; set; } 
+        public int ParentId { get; set; } 
 
         [Required]
         [StringLength(50)]
@@ -26,15 +26,13 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(50)]
         public string? Town { get; set; }
 
-        public string? MedicalInfo { get; set; } 
-
         [StringLength(10)]
         public string? ShirtSize { get; set; }
 
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey("GuardianId")]
-        public Guardian Guardian { get; set; } = null!;
+        [ForeignKey("ParentId")]
+        public Parent Parent { get; set; } = null!;
         public ICollection<TeamMember> TeamAssignments { get; set; } = new List<TeamMember>();
         public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
     }

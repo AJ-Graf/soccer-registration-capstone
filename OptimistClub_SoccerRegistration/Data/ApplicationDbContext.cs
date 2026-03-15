@@ -7,7 +7,7 @@ namespace OptimistClub_SoccerRegistration.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public DbSet<Guardian> Guardians { get; set; }
+        public DbSet<Parent> Parents { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Volunteer> Volunteers { get; set; }
         public DbSet<Team> Teams { get; set; }

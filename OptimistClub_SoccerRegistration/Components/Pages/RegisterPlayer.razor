@@ -1,5 +1,5 @@
 ﻿@page "/register"
-
+@rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.Extensions.Localization
@@ -19,7 +19,6 @@
 <EditForm Model="model" OnValidSubmit="Submit" OnInvalidSubmit="HandleInvalidSubmit">
     <DataAnnotationsValidator />
 
-    <!-- Consolidated Validation Alert -->
     @if (showMandatoryFieldsWarning && validationErrors.Any())
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -55,7 +54,6 @@
         </div>
     }
 
-    <!-- PLAYER INFORMATION -->
     <div class="card mb-4">
         <div class="card-header">@L["PlayerInfo"]</div>
         <div class="card-body">
@@ -139,7 +137,6 @@
         </div>
     </div>
 
-    <!-- PARENT / GUARDIAN INFORMATION -->
     <div class="card mb-4">
         <div class="card-header">@L["ParentInfo"]</div>
         <div class="card-body">
@@ -192,7 +189,6 @@
         </div>
     </div>
 
-    <!-- SIBLING INFORMATION -->
     <div class="card mb-4">
         <div class="card-header">@L["SiblingInfo"]</div>
         <div class="card-body">
@@ -299,7 +295,6 @@
         </div>
     </div>
 
-    <!-- VOLUNTEER INFORMATION -->
     <div class="card mb-4">
         <div class="card-header">@L["VolunteerInfo"]</div>
         <div class="card-body">
@@ -369,7 +364,6 @@
         </div>
     </div>
 
-    <!-- WAIVER / CONSENT -->
     <div class="card mb-4">
         <div class="card-header">@L["WaiverTitle"]</div>
         <div class="card-body">
@@ -448,7 +442,6 @@
     {
         showMandatoryFieldsWarning = true;
 
-        // Collect all validation errors
         var context = new ValidationContext(model);
         context.Items["Localizer"] = L;
         var results = new List<ValidationResult>();
@@ -456,7 +449,6 @@
 
         validationErrors = results.Select(r => r.ErrorMessage).ToList();
 
-        // Scroll to top of page
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 
@@ -471,7 +463,7 @@
 
             waiverAcceptedOn = DateTime.Now;
 
-            var guardian = new Guardian
+            var parent = new Parent
             {
                 FirstName = model.Parent.FirstName ?? string.Empty,
                 LastName = model.Parent.LastName ?? string.Empty,
@@ -481,11 +473,11 @@
                 WaiverAccepted = model.WaiverAccepted,
                 WaiverAcceptedOn = DateTime.Now
             };
-            await RegistrationService.CreateGuardianAsync(guardian);
+            await RegistrationService.CreateParentAsync(parent);
 
             var newPlayer = new Player
             {
-                GuardianId = guardian.GuardianId,
+                ParentId = parent.ParentId,
                 FirstName = model.Player.FirstName ?? string.Empty,
                 LastName = model.Player.LastName ?? string.Empty,
                 DateOfBirth = model.Player.DateOfBirth ?? DateTime.Today,
@@ -510,7 +502,7 @@
 
                 var sibPlayer = new Player
                 {
-                    GuardianId = guardian.GuardianId,
+                    ParentId = parent.ParentId,
                     FirstName = sib.FirstName ?? string.Empty,
                     LastName = sib.LastName ?? string.Empty,
                     DateOfBirth = sib.DateOfBirth ?? DateTime.Today,
@@ -525,7 +517,7 @@
             {
                 var vol = new Volunteer
                 {
-                    GuardianId = guardian.GuardianId,
+                    ParentId = parent.ParentId,
                     FirstName = model.Parent.FirstName ?? string.Empty,
                     LastName = model.Parent.LastName ?? string.Empty,
                     Role = model.Volunteer.Role,
@@ -539,7 +531,6 @@
             model = new RegistrationPageModel();
             waiverAcceptedOn = null;
             
-            // Redirect to home page after 2 seconds
             await Task.Delay(2000);
             NavigationManager.NavigateTo("/");
         }
@@ -568,12 +559,10 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Get the localizer from context
             var localizer = validationContext.Items.ContainsKey("Localizer") 
                 ? validationContext.Items["Localizer"] as IStringLocalizer<SharedResource> 
                 : null;
 
-            // Validate Player Info
             if (string.IsNullOrWhiteSpace(Player.FirstName))
             {
                 yield return new ValidationResult(
@@ -609,7 +598,6 @@
                     new[] { nameof(Player.ShirtSize) });
             }
 
-            // Validate Parent Info
             if (string.IsNullOrWhiteSpace(Parent.FirstName))
             {
                 yield return new ValidationResult(
@@ -644,7 +632,6 @@
                     new[] { nameof(Parent.Email) });
             }
 
-            // Validate Electronic Signature
             if (string.IsNullOrWhiteSpace(ElectronicSignature))
             {
                 yield return new ValidationResult(
@@ -652,7 +639,6 @@
                     new[] { nameof(ElectronicSignature) });
             }
 
-            // Validate Waiver Accepted
             if (!WaiverAccepted)
             {
                 yield return new ValidationResult(
@@ -660,7 +646,6 @@
                     new[] { nameof(WaiverAccepted) });
             }
 
-            // Validate Volunteer Info
             if (IsVolunteer)
             {
                 if (string.IsNullOrWhiteSpace(Volunteer.Role))
@@ -685,7 +670,6 @@
                 }
             }
 
-            // Validate Siblings
             for (int i = 0; i < Siblings.Count; i++)
             {
                 var sib = Siblings[i];

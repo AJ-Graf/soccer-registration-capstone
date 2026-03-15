@@ -5,7 +5,7 @@ namespace OptimistClub_SoccerRegistration.Services
     public interface IRegistrationService
     {
         Task<Player> CreatePlayerAsync(Player player);
-        Task<Guardian> CreateGuardianAsync(Guardian guardian);
+        Task<Parent> CreateParentAsync(Parent parent);
         Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer);
         Task<Registration> CreateRegistrationAsync(Registration registration);
         Task<RegistrationPeriod?> GetActiveRegistrationPeriodAsync();

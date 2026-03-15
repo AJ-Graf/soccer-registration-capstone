@@ -1,0 +1,211 @@
+﻿@page "/admin"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using OptimistClub_SoccerRegistration.Data
+@using OptimistClub_SoccerRegistration.Data.Models
+@* @attribute [Authorize(Roles = "Admin")] *@
+@inject ApplicationDbContext Context
+
+<h2>Admin Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Players</h5>
+                <h2>@playerCount</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Parents</h5>
+                <h2>@parentCount</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Volunteers</h5>
+                <h2>@volunteerCount</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "players" ? "active" : "")"
+                @onclick='() => activeTab = "players"'>
+            Players
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "parents" ? "active" : "")"
+                @onclick='() => activeTab = "parents"'>
+            Parents
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "volunteers" ? "active" : "")"
+                @onclick='() => activeTab = "volunteers"'>
+            Volunteers
+        </button>
+    </li>
+</ul>
+
+@if (activeTab == "players")
+{
+    <h4>Players</h4>
+    @if (players == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (players.Count == 0)
+    {
+        <p>No players registered.</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    <th>Town</th>
+                    <th>Shirt Size</th>
+                    <th>Parent</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in players)
+                {
+                    <tr>
+                        <td>@p.FirstName @p.LastName</td>
+                        <td>@p.DateOfBirth.ToShortDateString()</td>
+                        <td>@p.Gender</td>
+                        <td>@p.Town</td>
+                        <td>@p.ShirtSize</td>
+                        <td>@p.Parent?.FirstName @p.Parent?.LastName</td>
+                        <td>@p.DateAdded.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (activeTab == "parents")
+{
+    <h4>Parents</h4>
+    @if (parents == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (parents.Count == 0)
+    {
+        <p>No parents registered.</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Waiver Signed</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in parents)
+                {
+                    <tr>
+                        <td>@p.FirstName @p.LastName</td>
+                        <td>@p.Email</td>
+                        <td>@p.PhoneNumber</td>
+                        <td>@(p.WaiverAccepted ? "Yes" : "No")</td>
+                        <td>@p.DateAdded.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (activeTab == "volunteers")
+{
+    <h4>Volunteers</h4>
+    @if (volunteers == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (volunteers.Count == 0)
+    {
+        <p>No volunteers registered.</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Criminal Check</th>
+                    <th>Shirt Size</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in volunteers)
+                {
+                    <tr>
+                        <td>@v.FirstName @v.LastName</td>
+                        <td>@v.Role</td>
+                        <td>@(v.CriminalCheckCompleted ? "Yes" : "No")</td>
+                        <td>@v.ShirtSize</td>
+                        <td>@v.DateAdded.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private string activeTab = "players";
+    
+    private List<Player>? players;
+    private List<Parent>? parents;
+    private List<Volunteer>? volunteers;
+    
+    private int playerCount;
+    private int parentCount;
+    private int volunteerCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        playerCount = await Context.Players.CountAsync();
+        parentCount = await Context.Parents.CountAsync();
+        volunteerCount = await Context.Volunteers.CountAsync();
+        
+        players = await Context.Players
+            .Include(p => p.Parent)
+            .OrderByDescending(p => p.DateAdded)
+            .ToListAsync();
+            
+        parents = await Context.Parents
+            .OrderByDescending(p => p.DateAdded)
+            .ToListAsync();
+            
+        volunteers = await Context.Volunteers
+            .OrderByDescending(v => v.DateAdded)
+            .ToListAsync();
+    }
+}

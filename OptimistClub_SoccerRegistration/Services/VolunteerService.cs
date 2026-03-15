@@ -16,21 +16,21 @@ namespace OptimistClub_SoccerRegistration.Services
         public async Task<List<Volunteer>> GetAllVolunteersAsync()
         {
             return await _context.Volunteers
-                .Include(v => v.Guardian)
+                .Include(v => v.Parent)
                 .ToListAsync();
         }
 
         public async Task<Volunteer?> GetVolunteerByIdAsync(int id)
         {
             return await _context.Volunteers
-                .Include(v => v.Guardian)
+                .Include(v => v.Parent)
                 .FirstOrDefaultAsync(v => v.VolunteerId == id);
         }
 
         public async Task<List<Volunteer>> GetVolunteersByRoleAsync(string role)
         {
             return await _context.Volunteers
-                .Include(v => v.Guardian)
+                .Include(v => v.Parent)
                 .Where(v => v.Role == role)
                 .ToListAsync();
         }

@@ -8,7 +8,7 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [Key]
         public int VolunteerId { get; set; }
 
-        public int GuardianId { get; set; } 
+        public int ParentId { get; set; } 
 
         [Required]
         [StringLength(50)]
@@ -28,8 +28,8 @@ namespace OptimistClub_SoccerRegistration.Data.Models
 
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey("GuardianId")]
-        public Guardian Guardian { get; set; } = null!;
+        [ForeignKey("ParentId")]
+        public Parent Parent { get; set; } = null!;
         public ICollection<TeamMember> TeamAssignments { get; set; } = new List<TeamMember>();
     }
 }
