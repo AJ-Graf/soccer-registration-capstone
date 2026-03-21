@@ -13,6 +13,9 @@ namespace OptimistClub_SoccerRegistration.Data.Models
 
         public int SeasonYear { get; set; }
 
+        [StringLength(10)]
+        public string? AgeGroup { get; set; }
+
         public ICollection<TeamMember> TeamMembers { get; set; } = new List<TeamMember>();
         public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
     }

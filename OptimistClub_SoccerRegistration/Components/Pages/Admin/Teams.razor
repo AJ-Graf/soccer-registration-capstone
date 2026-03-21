@@ -10,11 +10,23 @@
     <div class="card-header">@(isEditing ? "Edit Team" : "Add Team")</div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-5 mb-2">
+            <div class="col-md-4 mb-2">
                 <input class="form-control" placeholder="Team Name" @bind="teamName" />
             </div>
-            <div class="col-md-3 mb-2">
-                <input type="number" class="form-control" placeholder="Season Year" @bind="seasonYear" />
+            <div class="col-md-2 mb-2">
+                <input type="number" class="form-control" placeholder="Year" @bind="seasonYear" />
+            </div>
+            <div class="col-md-2 mb-2">
+                <select class="form-select" @bind="teamAgeGroup">
+                    <option value="">Age Group</option>
+                    <option value="U6">U6</option>
+                    <option value="U8">U8</option>
+                    <option value="U10">U10</option>
+                    <option value="U12">U12</option>
+                    <option value="U14">U14</option>
+                    <option value="U16">U16</option>
+                    <option value="U18">U18</option>
+                </select>
             </div>
             <div class="col-md-4 mb-2">
                 @if (isEditing)
@@ -45,7 +57,14 @@ else
     {
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><strong>@team.TeamName</strong> (@team.SeasonYear)</span>
+                <span>
+                    <strong>@team.TeamName</strong>
+                    @if (!string.IsNullOrEmpty(team.AgeGroup))
+                    {
+                        <span class="badge bg-info ms-2">@team.AgeGroup</span>
+                    }
+                    <small class="text-muted ms-2">(@team.SeasonYear)</small>
+                </span>
                 <div>
                     <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditTeam(team)">Edit</button>
                     <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteTeam(team.TeamId)">Delete</button>
@@ -56,19 +75,23 @@ else
                     <div class="col-md-6">
                         <h6>Players</h6>
                         @{
-                            var players = team.TeamMembers.Where(tm => tm.PlayerId != null).ToList();
+                            var teamPlayers = team.TeamMembers.Where(tm => tm.PlayerId != null).ToList();
+                            var eligiblePlayers = GetEligiblePlayers(team.AgeGroup);
                         }
-                        @if (players.Count == 0)
+                        @if (teamPlayers.Count == 0)
                         {
-                            <p class="text-muted">No players assigned to any teams</p>
+                            <p class="text-muted">No players assigned</p>
                         }
                         else
                         {
                             <ul class="list-group mb-2">
-                                @foreach (var tm in players)
+                                @foreach (var tm in teamPlayers)
                                 {
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        @tm.Player?.FirstName @tm.Player?.LastName
+                                        <span>
+                                            @tm.Player?.FirstName @tm.Player?.LastName
+                                            <small class="text-muted">(@GetAge(tm.Player?.DateOfBirth) yrs)</small>
+                                        </span>
                                         <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(tm.TeamMemberId)">×</button>
                                     </li>
                                 }
@@ -78,16 +101,17 @@ else
                         <div class="input-group input-group-sm">
                             <select class="form-select" @bind="selectedPlayerId">
                                 <option value="0">Select a player</option>
-                                @if (unassignedPlayers != null)
+                                @foreach (var p in eligiblePlayers)
                                 {
-                                    @foreach (var p in unassignedPlayers)
-                                    {
-                                        <option value="@p.PlayerId">@p.FirstName @p.LastName</option>
-                                    }
+                                    <option value="@p.PlayerId">@p.FirstName @p.LastName (@GetAge(p.DateOfBirth) yrs)</option>
                                 }
                             </select>
                             <button class="btn btn-outline-success" @onclick="() => AddPlayerToTeam(team.TeamId)">Add</button>
                         </div>
+                        @if (!string.IsNullOrEmpty(team.AgeGroup) && eligiblePlayers.Count == 0)
+                        {
+                            <small class="text-muted">No eligible @team.AgeGroup players available</small>
+                        }
                     </div>
                     
                     <div class="col-md-6">
@@ -97,7 +121,7 @@ else
                         }
                         @if (volunteers.Count == 0)
                         {
-                            <p class="text-muted">No coaches / volunteers assigned to any teams</p>
+                            <p class="text-muted">No coaches assigned</p>
                         }
                         else
                         {
@@ -139,6 +163,7 @@ else
     
     private string teamName = "";
     private int seasonYear = DateTime.Now.Year;
+    private string teamAgeGroup = "";
     private bool isEditing = false;
     private int editingTeamId;
     
@@ -157,6 +182,30 @@ else
         unassignedVolunteers = await TeamService.GetUnassignedVolunteersAsync();
     }
 
+    private int GetAge(DateTime? dob)
+    {
+        if (dob == null) return 0;
+        var today = DateTime.Today;
+        var age = today.Year - dob.Value.Year;
+        if (dob.Value.Date > today.AddYears(-age)) age--;
+        return age;
+    }
+
+    private List<Player> GetEligiblePlayers(string? ageGroup)
+    {
+        if (unassignedPlayers == null) return new List<Player>();
+        if (string.IsNullOrEmpty(ageGroup)) return unassignedPlayers;
+
+        if (ageGroup.StartsWith("U") && int.TryParse(ageGroup.Substring(1), out int maxAge))
+        {
+            return unassignedPlayers
+                .Where(p => GetAge(p.DateOfBirth) < maxAge)
+                .ToList();
+        }
+
+        return unassignedPlayers;
+    }
+
     private async Task AddTeam()
     {
         if (string.IsNullOrWhiteSpace(teamName)) return;
@@ -164,12 +213,14 @@ else
         var team = new Team
         {
             TeamName = teamName,
-            SeasonYear = seasonYear
+            SeasonYear = seasonYear,
+            AgeGroup = teamAgeGroup
         };
 
         await TeamService.CreateTeamAsync(team);
         teamName = "";
         seasonYear = DateTime.Now.Year;
+        teamAgeGroup = "";
         await LoadData();
     }
 
@@ -179,6 +230,7 @@ else
         editingTeamId = team.TeamId;
         teamName = team.TeamName;
         seasonYear = team.SeasonYear;
+        teamAgeGroup = team.AgeGroup ?? "";
     }
 
     private async Task SaveEdit()
@@ -187,7 +239,8 @@ else
         {
             TeamId = editingTeamId,
             TeamName = teamName,
-            SeasonYear = seasonYear
+            SeasonYear = seasonYear,
+            AgeGroup = teamAgeGroup
         };
 
         await TeamService.UpdateTeamAsync(team);
@@ -201,6 +254,7 @@ else
         editingTeamId = 0;
         teamName = "";
         seasonYear = DateTime.Now.Year;
+        teamAgeGroup = "";
     }
 
     private async Task DeleteTeam(int id)
