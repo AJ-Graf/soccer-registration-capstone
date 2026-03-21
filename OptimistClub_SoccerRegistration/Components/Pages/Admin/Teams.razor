@@ -1,0 +1,238 @@
+﻿@page "/admin/teams"
+@rendermode InteractiveServer
+@using OptimistClub_SoccerRegistration.Data.Models
+@using OptimistClub_SoccerRegistration.Services
+@inject ITeamService TeamService
+
+<h2>Teams</h2>
+
+<div class="card mb-4">
+    <div class="card-header">@(isEditing ? "Edit Team" : "Add Team")</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-5 mb-2">
+                <input class="form-control" placeholder="Team Name" @bind="teamName" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <input type="number" class="form-control" placeholder="Season Year" @bind="seasonYear" />
+            </div>
+            <div class="col-md-4 mb-2">
+                @if (isEditing)
+                {
+                    <button class="btn btn-primary me-2" @onclick="SaveEdit">Save</button>
+                    <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="AddTeam">Add Team</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (teams == null)
+{
+    <p>Loading team data</p>
+}
+else if (teams.Count == 0)
+{
+    <p>No registered teams</p>
+}
+else
+{
+    @foreach (var team in teams)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>@team.TeamName</strong> (@team.SeasonYear)</span>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditTeam(team)">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteTeam(team.TeamId)">Delete</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Players</h6>
+                        @{
+                            var players = team.TeamMembers.Where(tm => tm.PlayerId != null).ToList();
+                        }
+                        @if (players.Count == 0)
+                        {
+                            <p class="text-muted">No players assigned to any teams</p>
+                        }
+                        else
+                        {
+                            <ul class="list-group mb-2">
+                                @foreach (var tm in players)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @tm.Player?.FirstName @tm.Player?.LastName
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(tm.TeamMemberId)">×</button>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" @bind="selectedPlayerId">
+                                <option value="0">Select a player</option>
+                                @if (unassignedPlayers != null)
+                                {
+                                    @foreach (var p in unassignedPlayers)
+                                    {
+                                        <option value="@p.PlayerId">@p.FirstName @p.LastName</option>
+                                    }
+                                }
+                            </select>
+                            <button class="btn btn-outline-success" @onclick="() => AddPlayerToTeam(team.TeamId)">Add</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6>Coaches / Volunteers</h6>
+                        @{
+                            var volunteers = team.TeamMembers.Where(tm => tm.VolunteerId != null).ToList();
+                        }
+                        @if (volunteers.Count == 0)
+                        {
+                            <p class="text-muted">No coaches / volunteers assigned to any teams</p>
+                        }
+                        else
+                        {
+                            <ul class="list-group mb-2">
+                                @foreach (var tm in volunteers)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @tm.Volunteer?.FirstName @tm.Volunteer?.LastName (@tm.Role)
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(tm.TeamMemberId)">×</button>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" @bind="selectedVolunteerId">
+                                <option value="0">Select a volunteer</option>
+                                @if (unassignedVolunteers != null)
+                                {
+                                    @foreach (var v in unassignedVolunteers)
+                                    {
+                                        <option value="@v.VolunteerId">@v.FirstName @v.LastName (@v.Role)</option>
+                                    }
+                                }
+                            </select>
+                            <button class="btn btn-outline-success" @onclick="() => AddVolunteerToTeam(team.TeamId)">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private List<Team>? teams;
+    private List<Player>? unassignedPlayers;
+    private List<Volunteer>? unassignedVolunteers;
+    
+    private string teamName = "";
+    private int seasonYear = DateTime.Now.Year;
+    private bool isEditing = false;
+    private int editingTeamId;
+    
+    private int selectedPlayerId;
+    private int selectedVolunteerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        teams = await TeamService.GetAllTeamsAsync();
+        unassignedPlayers = await TeamService.GetUnassignedPlayersAsync();
+        unassignedVolunteers = await TeamService.GetUnassignedVolunteersAsync();
+    }
+
+    private async Task AddTeam()
+    {
+        if (string.IsNullOrWhiteSpace(teamName)) return;
+
+        var team = new Team
+        {
+            TeamName = teamName,
+            SeasonYear = seasonYear
+        };
+
+        await TeamService.CreateTeamAsync(team);
+        teamName = "";
+        seasonYear = DateTime.Now.Year;
+        await LoadData();
+    }
+
+    private void EditTeam(Team team)
+    {
+        isEditing = true;
+        editingTeamId = team.TeamId;
+        teamName = team.TeamName;
+        seasonYear = team.SeasonYear;
+    }
+
+    private async Task SaveEdit()
+    {
+        var team = new Team
+        {
+            TeamId = editingTeamId,
+            TeamName = teamName,
+            SeasonYear = seasonYear
+        };
+
+        await TeamService.UpdateTeamAsync(team);
+        CancelEdit();
+        await LoadData();
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+        editingTeamId = 0;
+        teamName = "";
+        seasonYear = DateTime.Now.Year;
+    }
+
+    private async Task DeleteTeam(int id)
+    {
+        await TeamService.DeleteTeamAsync(id);
+        await LoadData();
+    }
+
+    private async Task AddPlayerToTeam(int teamId)
+    {
+        if (selectedPlayerId == 0) return;
+        
+        await TeamService.AddPlayerToTeamAsync(teamId, selectedPlayerId);
+        selectedPlayerId = 0;
+        await LoadData();
+    }
+
+    private async Task AddVolunteerToTeam(int teamId)
+    {
+        if (selectedVolunteerId == 0) return;
+        
+        var volunteer = unassignedVolunteers?.FirstOrDefault(v => v.VolunteerId == selectedVolunteerId);
+        var role = volunteer?.Role ?? "Coach";
+        
+        await TeamService.AddVolunteerToTeamAsync(teamId, selectedVolunteerId, role);
+        selectedVolunteerId = 0;
+        await LoadData();
+    }
+
+    private async Task RemoveMember(int teamMemberId)
+    {
+        await TeamService.RemoveTeamMemberAsync(teamMemberId);
+        await LoadData();
+    }
+}

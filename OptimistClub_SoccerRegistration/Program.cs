@@ -41,6 +41,7 @@ internal class Program
 
         builder.Services.AddScoped<IRegistrationService, RegistrationService>();
         builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+        builder.Services.AddScoped<ITeamService, TeamService>();
 
         // ✅ Database
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
