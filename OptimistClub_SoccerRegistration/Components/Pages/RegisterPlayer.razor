@@ -485,7 +485,19 @@
                 Town = model.Player.Town,
                 ShirtSize = model.Player.ShirtSize
             };
+
             await RegistrationService.CreatePlayerAsync(newPlayer);
+
+            var activePeriod = await RegistrationService.GetActiveRegistrationPeriodAsync();
+            var registration = new Registration
+            {
+                PlayerId = newPlayer.PlayerId,
+                PeriodId = activePeriod?.PeriodId,
+                RegisteredAt = DateTime.UtcNow,
+                PaymentStatus = "Pending"
+            };
+
+            await RegistrationService.CreateRegistrationAsync(registration);
 
             foreach (var sib in model.Siblings)
             {
@@ -511,6 +523,15 @@
                     ShirtSize = sib.ShirtSize
                 };
                 await RegistrationService.CreatePlayerAsync(sibPlayer);
+
+                var sibRegistration = new Registration
+                {
+                    PlayerId = sibPlayer.PlayerId,
+                    PeriodId = activePeriod?.PeriodId,
+                    RegisteredAt = DateTime.UtcNow,
+                    PaymentStatus = "Pending"
+                };
+                await RegistrationService.CreateRegistrationAsync(sibRegistration);
             }
 
             if (model.IsVolunteer)

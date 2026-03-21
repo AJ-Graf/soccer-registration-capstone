@@ -10,17 +10,18 @@ namespace OptimistClub_SoccerRegistration.Data.Models
 
         public int PlayerId { get; set; }
 
-        public int PeriodId { get; set; }
+        public int? PeriodId { get; set; }
 
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
 
         [StringLength(25)]
-        public string PaymentStatus { get; set; } = "Pending";  
+        public string PaymentStatus { get; set; } = "Pending";
 
         [ForeignKey("PlayerId")]
         public Player Player { get; set; } = null!;
 
         [ForeignKey("PeriodId")]
-        public RegistrationPeriod Period { get; set; } = null!;
+        public RegistrationPeriod? RegistrationPeriod { get; set; }
     }
 }
+

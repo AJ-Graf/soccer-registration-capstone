@@ -19,6 +19,9 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         [StringLength(50)]
         public string LastName { get; set; } = string.Empty;
 
+        [StringLength(25)]
+        public string? Role { get; set; }
+
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
 

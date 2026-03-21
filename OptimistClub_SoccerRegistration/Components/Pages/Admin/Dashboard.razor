@@ -1,11 +1,10 @@
 ﻿@page "/admin"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.EntityFrameworkCore
-@using OptimistClub_SoccerRegistration.Data
 @using OptimistClub_SoccerRegistration.Data.Models
-@* @attribute [Authorize(Roles = "Admin")] *@
-@inject ApplicationDbContext Context
+@using OptimistClub_SoccerRegistration.Services
+@attribute [Authorize(Roles = "Admin")]
+@inject IRegistrationService RegistrationService
 
 <h2>Admin Dashboard</h2>
 
@@ -34,6 +33,14 @@
             </div>
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="card text-dark" style="background-color: rgba(0, 0, 0, 0.05); border: none;">
+            <div class="card-body">
+                <h5 class="card-title">Pending Payment</h5>
+                <h2>@pendingCount</h2>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ul class="nav nav-tabs mb-3">
@@ -55,11 +62,65 @@
             Volunteers
         </button>
     </li>
+    <li class="nav-item">
+        <button class="nav-link @(activeTab == "registrations" ? "active" : "")"
+                @onclick='() => activeTab = "registrations"'>
+            Registrations
+        </button>
+    </li>
 </ul>
 
 @if (activeTab == "players")
 {
-    <h4>Players</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Players</h4>
+    </div>
+
+    @if (editingPlayer != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Edit Player</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <input class="form-control" placeholder="First Name" @bind="editingPlayer.FirstName" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input class="form-control" placeholder="Last Name" @bind="editingPlayer.LastName" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="date" class="form-control" @bind="editingPlayer.DateOfBirth" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingPlayer.Gender">
+                            <option value="">Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="Town" @bind="editingPlayer.Town" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingPlayer.ShirtSize">
+                            <option value="">Shirt Size</option>
+                            <option value="ChildXS">Child XS</option>
+                            <option value="ChildS">Child S</option>
+                            <option value="ChildM">Child M</option>
+                            <option value="ChildL">Child L</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <button class="btn btn-primary me-2" @onclick="SavePlayer">Save</button>
+                        <button class="btn btn-secondary" @onclick="CancelEditPlayer">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     @if (players == null)
     {
         <p>Loading player data</p>
@@ -75,11 +136,12 @@
                 <tr>
                     <th>Name</th>
                     <th>Parent</th>
-                    <th>Town</th>
                     <th>Gender</th>
                     <th>Date of Birth</th>
+                    <th>Town</th>
                     <th>Shirt Size</th>
                     <th>Registered</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,11 +150,15 @@
                     <tr>
                         <td>@p.FirstName @p.LastName</td>
                         <td>@p.Parent?.FirstName @p.Parent?.LastName</td>
-                        <td>@p.Town</td>
                         <td>@p.Gender</td>
                         <td>@p.DateOfBirth.ToShortDateString()</td>
+                        <td>@p.Town</td>
                         <td>@p.ShirtSize</td>
                         <td>@p.DateAdded.ToShortDateString()</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditPlayer(p)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeletePlayer(p.PlayerId)">Delete</button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -102,7 +168,45 @@
 
 @if (activeTab == "parents")
 {
-    <h4>Parents</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Parents</h4>
+    </div>
+
+    @if (editingParent != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Edit Parent</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="First Name" @bind="editingParent.FirstName" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="Last Name" @bind="editingParent.LastName" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingParent.Role">
+                            <option value="">Role</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Grand Parent">Grand Parent</option>
+                            <option value="Guardian">Guardian</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="Phone" @bind="editingParent.PhoneNumber" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="Email" @bind="editingParent.Email" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <button class="btn btn-primary me-2" @onclick="SaveParent">Save</button>
+                        <button class="btn btn-secondary" @onclick="CancelEditParent">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     @if (parents == null)
     {
         <p>Loading parent data</p>
@@ -117,10 +221,12 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Role</th>
                     <th>Email Address</th>
                     <th>Phone Number</th>
                     <th>Waiver Status</th>
                     <th>Registered</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -128,10 +234,15 @@
                 {
                     <tr>
                         <td>@p.FirstName @p.LastName</td>
+                        <td>@(p.Role ?? "Parent")</td>
                         <td>@p.Email</td>
                         <td>@p.PhoneNumber</td>
                         <td>@(p.WaiverAccepted ? "Accepted" : "Rejected")</td>
                         <td>@p.DateAdded.ToShortDateString()</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditParent(p)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteParent(p.ParentId)">Delete</button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -141,7 +252,54 @@
 
 @if (activeTab == "volunteers")
 {
-    <h4>Volunteers</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Volunteers</h4>
+    </div>
+
+    @if (editingVolunteer != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Edit Volunteer</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="First Name" @bind="editingVolunteer.FirstName" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input class="form-control" placeholder="Last Name" @bind="editingVolunteer.LastName" />
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingVolunteer.Role">
+                            <option value="">Role</option>
+                            <option value="Coach">Coach</option>
+                            <option value="Referee">Referee</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingVolunteer.ShirtSize">
+                            <option value="">Shirt Size</option>
+                            <option value="AdultS">Adult S</option>
+                            <option value="AdultM">Adult M</option>
+                            <option value="AdultL">Adult L</option>
+                            <option value="AdultXL">Adult XL</option>
+                            <option value="AdultXXL">Adult XXL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <select class="form-select" @bind="editingVolunteer.CriminalCheckCompleted">
+                            <option value="false">Criminal Check: No</option>
+                            <option value="true">Criminal Check: Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <button class="btn btn-primary me-2" @onclick="SaveVolunteer">Save</button>
+                        <button class="btn btn-secondary" @onclick="CancelEditVolunteer">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     @if (volunteers == null)
     {
         <p>Loading volunteer data</p>
@@ -160,6 +318,7 @@
                     <th>Criminal Check</th>
                     <th>Shirt Size</th>
                     <th>Registered</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -171,6 +330,70 @@
                         <td>@(v.CriminalCheckCompleted ? "Yes" : "No")</td>
                         <td>@v.ShirtSize</td>
                         <td>@v.DateAdded.ToShortDateString()</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditVolunteer(v)">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteVolunteer(v.VolunteerId)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (activeTab == "registrations")
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Registrations</h4>
+        <div>
+            <select class="form-select form-select-sm" style="width: auto; display: inline-block;" @bind="paymentFilter" @bind:after="LoadData">
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+                <option value="Unpaid">Unpaid</option>
+            </select>
+        </div>
+    </div>
+
+    @if (registrations == null)
+    {
+        <p>Loading registration data</p>
+    }
+    else if (registrations.Count == 0)
+    {
+        <p>No registrations found</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Parent</th>
+                    <th>Registered</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registrations)
+                {
+                    <tr>
+                        <td>@r.Player?.FirstName @r.Player?.LastName</td>
+                        <td>@r.Player?.Parent?.FirstName @r.Player?.Parent?.LastName</td>
+                        <td>@r.RegisteredAt.ToShortDateString()</td>
+                        <td>
+                            <span class="badge @GetPaymentBadgeClass(r.PaymentStatus)">@r.PaymentStatus</span>
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm" style="width: auto; display: inline-block;"
+                                    value="@r.PaymentStatus"
+                                    @onchange="(e) => UpdatePaymentStatus(r.RegistrationId, e.Value?.ToString())">
+                                <option value="Pending">Pending</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Unpaid">Unpaid</option>
+                            </select>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -180,32 +403,169 @@
 
 @code {
     private string activeTab = "players";
-    
+    private string paymentFilter = "";
+
     private List<Player>? players;
     private List<Parent>? parents;
     private List<Volunteer>? volunteers;
-    
+    private List<Registration>? registrations;
+
     private int playerCount;
     private int parentCount;
     private int volunteerCount;
+    private int pendingCount;
+
+    private Player? editingPlayer;
+    private Parent? editingParent;
+    private Volunteer? editingVolunteer;
 
     protected override async Task OnInitializedAsync()
     {
-        playerCount = await Context.Players.CountAsync();
-        parentCount = await Context.Parents.CountAsync();
-        volunteerCount = await Context.Volunteers.CountAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        players = await RegistrationService.GetAllPlayersAsync();
+        parents = await RegistrationService.GetAllParentsAsync();
+        volunteers = await RegistrationService.GetAllVolunteersAsync();
         
-        players = await Context.Players
-            .Include(p => p.Parent)
-            .OrderByDescending(p => p.DateAdded)
-            .ToListAsync();
-            
-        parents = await Context.Parents
-            .OrderByDescending(p => p.DateAdded)
-            .ToListAsync();
-            
-        volunteers = await Context.Volunteers
-            .OrderByDescending(v => v.DateAdded)
-            .ToListAsync();
+        var allRegistrations = await RegistrationService.GetAllRegistrationsAsync();
+        
+        registrations = string.IsNullOrEmpty(paymentFilter)
+            ? allRegistrations
+            : allRegistrations.Where(r => r.PaymentStatus == paymentFilter).ToList();
+
+        playerCount = players?.Count ?? 0;
+        parentCount = parents?.Count ?? 0;
+        volunteerCount = volunteers?.Count ?? 0;
+        pendingCount = allRegistrations?.Count(r => r.PaymentStatus == "Pending") ?? 0;
+    }
+
+    private string GetPaymentBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Paid" => "bg-success",
+            "Pending" => "bg-warning text-dark",
+            "Unpaid" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+
+    private void EditPlayer(Player player)
+    {
+        editingPlayer = new Player
+        {
+            PlayerId = player.PlayerId,
+            ParentId = player.ParentId,
+            FirstName = player.FirstName,
+            LastName = player.LastName,
+            DateOfBirth = player.DateOfBirth,
+            Gender = player.Gender,
+            Town = player.Town,
+            ShirtSize = player.ShirtSize,
+            DateAdded = player.DateAdded
+        };
+    }
+
+    private async Task SavePlayer()
+    {
+        if (editingPlayer != null)
+        {
+            await RegistrationService.UpdatePlayerAsync(editingPlayer);
+            editingPlayer = null;
+            await LoadData();
+        }
+    }
+
+    private void CancelEditPlayer() => editingPlayer = null;
+
+    private async Task DeletePlayer(int id)
+    {
+        await RegistrationService.DeletePlayerAsync(id);
+        await LoadData();
+    }
+
+
+    private void EditParent(Parent parent)
+    {
+        editingParent = new Parent
+        {
+            ParentId = parent.ParentId,
+            UserId = parent.UserId,
+            FirstName = parent.FirstName,
+            LastName = parent.LastName,
+            Role = parent.Role,
+            PhoneNumber = parent.PhoneNumber,
+            Email = parent.Email,
+            ElectronicSignature = parent.ElectronicSignature,
+            WaiverAccepted = parent.WaiverAccepted,
+            WaiverAcceptedOn = parent.WaiverAcceptedOn,
+            DateAdded = parent.DateAdded
+        };
+    }
+
+    private async Task SaveParent()
+    {
+        if (editingParent != null)
+        {
+            await RegistrationService.UpdateParentAsync(editingParent);
+            editingParent = null;
+            await LoadData();
+        }
+    }
+
+    private void CancelEditParent() => editingParent = null;
+
+    private async Task DeleteParent(int id)
+    {
+        await RegistrationService.DeleteParentAsync(id);
+        await LoadData();
+    }
+
+
+    private void EditVolunteer(Volunteer volunteer)
+    {
+        editingVolunteer = new Volunteer
+        {
+            VolunteerId = volunteer.VolunteerId,
+            ParentId = volunteer.ParentId,
+            FirstName = volunteer.FirstName,
+            LastName = volunteer.LastName,
+            Role = volunteer.Role,
+            ShirtSize = volunteer.ShirtSize,
+            CriminalCheckCompleted = volunteer.CriminalCheckCompleted,
+            DateAdded = volunteer.DateAdded
+        };
+    }
+
+    private async Task SaveVolunteer()
+    {
+        if (editingVolunteer != null)
+        {
+            await RegistrationService.UpdateVolunteerAsync(editingVolunteer);
+            editingVolunteer = null;
+            await LoadData();
+        }
+    }
+
+    private void CancelEditVolunteer() => editingVolunteer = null;
+
+    private async Task DeleteVolunteer(int id)
+    {
+        await RegistrationService.DeleteVolunteerAsync(id);
+        await LoadData();
+    }
+
+
+    private async Task UpdatePaymentStatus(int registrationId, string? status)
+    {
+        if (!string.IsNullOrEmpty(status))
+        {
+            await RegistrationService.UpdatePaymentStatusAsync(registrationId, status);
+            await LoadData();
+        }
     }
 }
