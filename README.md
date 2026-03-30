@@ -103,12 +103,12 @@ added is listed below:
 SERVICES CODE
 
 ```csharp
-builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-builder.Services.AddScoped<IVolunteerService, VolunteerService>();
-builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IScheduleService, ScheduleService>();
-builder.Services.AddScoped();
-builder.Services.AddSingleton();
+ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+ builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+ builder.Services.AddScoped<ITeamService, TeamService>();
+ builder.Services.AddScoped<IScheduleService, ScheduleService>();
+ builder.Services.AddScoped<ExcelExportService>();
+ builder.Services.AddSingleton<QrCodeService>();
 ```
 
 DATA SEEDING CODE
