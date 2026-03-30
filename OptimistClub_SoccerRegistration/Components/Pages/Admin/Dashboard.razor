@@ -5,8 +5,17 @@
 @using OptimistClub_SoccerRegistration.Services
 @attribute [Authorize(Roles = "Admin")]
 @inject IRegistrationService RegistrationService
+@inject IJSRuntime JS
 
 <h2>Admin Dashboard</h2>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+    </div>
+}
 
 <div class="row mb-3">
     <div class="col-md-3">
@@ -40,6 +49,16 @@
                 <h2>@pendingCount</h2>
             </div>
         </div>
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-success" @onclick="ExportToExcel">
+            Export to Excel
+        </button>
+    </div>
+    <div class="mb-3">
+        <a href="/admin/qrcode" class="btn btn-outline-primary">
+            QR Code
+        </a>
     </div>
 </div>
 
@@ -157,7 +176,15 @@
                         <td>@p.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditPlayer(p)">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeletePlayer(p.PlayerId)">Delete</button>
+                            @if (confirmDeletePlayerId == p.PlayerId)
+                            {
+                                <button class="btn btn-sm btn-danger me-1" @onclick="() => DeletePlayer(p.PlayerId)">Confirm</button>
+                                <button class="btn btn-sm btn-secondary" @onclick="() => confirmDeletePlayerId = null">Cancel</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => confirmDeletePlayerId = p.PlayerId">Delete</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -241,7 +268,15 @@
                         <td>@p.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditParent(p)">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteParent(p.ParentId)">Delete</button>
+                            @if (confirmDeleteParentId == p.ParentId)
+                            {
+                                <button class="btn btn-sm btn-danger me-1" @onclick="() => DeleteParent(p.ParentId)">Confirm</button>
+                                <button class="btn btn-sm btn-secondary" @onclick="() => confirmDeleteParentId = null">Cancel</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => confirmDeleteParentId = p.ParentId">Delete</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -332,7 +367,15 @@
                         <td>@v.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditVolunteer(v)">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteVolunteer(v.VolunteerId)">Delete</button>
+                            @if (confirmDeleteVolunteerId == v.VolunteerId)
+                            {
+                                <button class="btn btn-sm btn-danger me-1" @onclick="() => DeleteVolunteer(v.VolunteerId)">Confirm</button>
+                                <button class="btn btn-sm btn-secondary" @onclick="() => confirmDeleteVolunteerId = null">Cancel</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => confirmDeleteVolunteerId = v.VolunteerId">Delete</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -418,6 +461,11 @@
     private Player? editingPlayer;
     private Parent? editingParent;
     private Volunteer? editingVolunteer;
+
+    private int? confirmDeletePlayerId;
+    private int? confirmDeleteParentId;
+    private int? confirmDeleteVolunteerId;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -567,5 +615,10 @@
             await RegistrationService.UpdatePaymentStatusAsync(registrationId, status);
             await LoadData();
         }
+    }
+
+    private async Task ExportToExcel()
+    {
+        await JS.InvokeVoidAsync("open", "/api/export/registrations", "_blank");
     }
 }

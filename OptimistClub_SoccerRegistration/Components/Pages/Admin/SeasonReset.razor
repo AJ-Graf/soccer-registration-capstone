@@ -1,0 +1,130 @@
+﻿@page "/admin/reset"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using OptimistClub_SoccerRegistration.Data
+@attribute [Authorize(Roles = "Admin")]
+@inject ApplicationDbContext Context
+
+<h2>Season Reset</h2>
+
+<div class="alert alert-danger">
+    <strong>Warning:</strong> This will permanently remove all team/player data in the current season.</div>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="alert @(statusIsError ? "alert-danger" : "alert-success") alert-dismissible fade show">
+        @statusMessage
+        <button type="button" class="btn-close" @onclick='() => statusMessage = null'></button>
+    </div>
+}
+
+@if (!showConfirm)
+{
+    <p>The following information will be removed:</p>
+    <ul>
+        <li><strong>@playerCount</strong> players</li>
+        <li><strong>@volunteerCount</strong> volunteers</li>
+        <li><strong>@registrationCount</strong> registrations</li>
+        <li><strong>@teamMemberCount</strong> team assignments</li>
+        <li><strong>@parentCount</strong> parents</li>
+    </ul>
+
+    <button class="btn btn-danger" @onclick="() => showConfirm = true" disabled="@(playerCount == 0 && volunteerCount == 0)">
+        Reset Season Data
+    </button>
+}
+else
+{
+    <div class="card border-danger">
+        <div class="card-body">
+            <p>Type <strong>RESET</strong> to confirm:</p>
+            <div class="row">
+                <div class="col-md-3">
+                    <input class="form-control" @bind="confirmText" placeholder="Type RESET" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-danger me-2" @onclick="ExecuteReset"
+                            disabled="@(confirmText != "RESET" || isResetting)">
+                        @if (isResetting)
+                        {
+                            <span>Removing season data</span>
+                        }
+                        else
+                        {
+                            <span>Confirm Reset</span>
+                        }
+                    </button>
+                    <button class="btn btn-secondary" @onclick="CancelReset">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private int playerCount;
+    private int volunteerCount;
+    private int registrationCount;
+    private int teamMemberCount;
+    private int parentCount;
+
+    private bool showConfirm;
+    private bool isResetting;
+    private bool statusIsError;
+    private string? confirmText;
+    private string? statusMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCounts();
+    }
+
+    private async Task LoadCounts()
+    {
+        playerCount = await Context.Players.CountAsync();
+        volunteerCount = await Context.Volunteers.CountAsync();
+        registrationCount = await Context.Registrations.CountAsync();
+        teamMemberCount = await Context.TeamMembers.CountAsync();
+        parentCount = await Context.Parents.CountAsync();
+    }
+
+    private async Task ExecuteReset()
+    {
+        if (confirmText != "RESET") return;
+
+        try
+        {
+            isResetting = true;
+
+            Context.TeamMembers.RemoveRange(await Context.TeamMembers.ToListAsync());
+            Context.Registrations.RemoveRange(await Context.Registrations.ToListAsync());
+            Context.Volunteers.RemoveRange(await Context.Volunteers.ToListAsync());
+            Context.Players.RemoveRange(await Context.Players.ToListAsync());
+            Context.Parents.RemoveRange(await Context.Parents.ToListAsync());
+
+            await Context.SaveChangesAsync();
+
+            statusMessage = "Season data has been cleared.";
+            statusIsError = false;
+            showConfirm = false;
+            confirmText = null;
+            await LoadCounts();
+        }
+        catch (Exception ex)
+        {
+            statusMessage = "Error: " + ex.Message;
+            statusIsError = true;
+        }
+        finally
+        {
+            isResetting = false;
+        }
+    }
+
+    private void CancelReset()
+    {
+        showConfirm = false;
+        confirmText = null;
+    }
+}

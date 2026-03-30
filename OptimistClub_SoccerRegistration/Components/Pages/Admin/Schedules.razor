@@ -1,0 +1,249 @@
+﻿@page "/admin/schedules"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using OptimistClub_SoccerRegistration.Data.Models
+@using OptimistClub_SoccerRegistration.Services
+@attribute [Authorize(Roles = "Admin")]
+@inject IScheduleService ScheduleService
+@inject ITeamService TeamService
+
+<h2>Game Schedules</h2>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+    </div>
+}
+
+<div class="card mb-4">
+    <div class="card-header">@(isEditing ? "Edit Game" : "Add Game")</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Team</label>
+                <select class="form-select" @bind="selectedTeamId">
+                    <option value="0">Select a team</option>
+                    @if (teams != null)
+                    {
+                        @foreach (var t in teams)
+                        {
+                            <option value="@t.TeamId">@t.TeamName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Location</label>
+                <input class="form-control" placeholder="Location" @bind="location" />
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" @bind="gameDate" />
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="form-label">Time</label>
+                <input type="time" class="form-control" value="@gameTime" @onchange="HandleTimeChange" />
+            </div>
+            <div class="col-md-2 mb-2 d-flex align-items-end">
+                @if (isEditing)
+                {
+                    <button class="btn btn-primary me-2" @onclick="SaveEdit">Save</button>
+                    <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="AddSchedule">Add</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Filter by Team</label>
+    <select class="form-select" style="width: auto; display: inline-block;" @bind="filterTeamId" @bind:after="LoadData">
+        <option value="0">All Teams</option>
+        @if (teams != null)
+        {
+            @foreach (var t in teams)
+            {
+                <option value="@t.TeamId">@t.TeamName</option>
+            }
+        }
+    </select>
+</div>
+
+@if (schedules == null)
+{
+    <p>Loading scheduled games</p>
+}
+else if (schedules.Count == 0)
+{
+    <p>No scheduled games found</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in schedules)
+            {
+                <tr>
+                    <td>@s.Team?.TeamName</td>
+                    <td>@s.Location</td>
+                    <td>@s.GameDate.ToString("yyyy-MM-dd")</td>
+                    <td>@s.GameTime.ToString(@"hh\:mm")</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditSchedule(s)">Edit</button>
+                        @if (confirmDeleteId == s.ScheduleId)
+                        {
+                            <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(s.ScheduleId)">Confirm</button>
+                            <button class="btn btn-sm btn-secondary" @onclick="() => confirmDeleteId = 0">Cancel</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => confirmDeleteId = s.ScheduleId">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Schedule>? schedules;
+    private List<Team>? teams;
+
+    private int selectedTeamId;
+    private string location = "";
+    private DateTime gameDate = DateTime.Today;
+    private string gameTime = "18:00";
+
+    private bool isEditing;
+    private int editingScheduleId;
+    private int filterTeamId;
+    private int confirmDeleteId;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teams = await TeamService.GetAllTeamsAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            schedules = filterTeamId == 0
+                ? await ScheduleService.GetAllSchedulesAsync()
+                : await ScheduleService.GetSchedulesByTeamAsync(filterTeamId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task AddSchedule()
+    {
+        if (selectedTeamId == 0) return;
+
+        try
+        {
+            var schedule = new Schedule
+            {
+                TeamId = selectedTeamId,
+                Location = location,
+                GameDate = gameDate,
+                GameTime = TimeSpan.Parse(gameTime)
+            };
+
+            await ScheduleService.CreateScheduleAsync(schedule);
+            ClearForm();
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private void EditSchedule(Schedule s)
+    {
+        isEditing = true;
+        editingScheduleId = s.ScheduleId;
+        selectedTeamId = s.TeamId;
+        location = s.Location ?? "";
+        gameDate = s.GameDate;
+        gameTime = s.GameTime.ToString(@"hh\:mm");
+    }
+
+    private async Task SaveEdit()
+    {
+        try
+        {
+            var schedule = new Schedule
+            {
+                ScheduleId = editingScheduleId,
+                TeamId = selectedTeamId,
+                Location = location,
+                GameDate = gameDate,
+                GameTime = TimeSpan.Parse(gameTime)
+            };
+
+            await ScheduleService.UpdateScheduleAsync(schedule);
+            CancelEdit();
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+        editingScheduleId = 0;
+        ClearForm();
+    }
+
+    private void ClearForm()
+    {
+        selectedTeamId = 0;
+        location = "";
+        gameDate = DateTime.Today;
+        gameTime = "18:00";
+    }
+
+    private async Task ConfirmDelete(int id)
+    {
+        try
+        {
+            await ScheduleService.DeleteScheduleAsync(id);
+            confirmDeleteId = 0;
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private void HandleTimeChange(ChangeEventArgs e)
+    {
+        gameTime = e.Value?.ToString() ?? "18:00";
+    }
+}

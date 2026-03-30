@@ -31,6 +31,7 @@ internal class Program
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 
+
         builder.Services.AddAuthorization();
         builder.Services.AddAuthentication(options =>
         {
@@ -38,10 +39,15 @@ internal class Program
             options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
         })
         .AddIdentityCookies();
+        
+        // SERVICES CODE
 
         builder.Services.AddScoped<IRegistrationService, RegistrationService>();
         builder.Services.AddScoped<IVolunteerService, VolunteerService>();
         builder.Services.AddScoped<ITeamService, TeamService>();
+        builder.Services.AddScoped<IScheduleService, ScheduleService>();
+        builder.Services.AddScoped<ExcelExportService>();
+        builder.Services.AddSingleton<QrCodeService>();
 
         // ✅ Database
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -65,6 +71,8 @@ internal class Program
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
         var app = builder.Build();
+
+        // DATA SEEDING CODE
 
         using (var scope = app.Services.CreateScope())
         {
@@ -140,6 +148,29 @@ internal class Program
 
             return Results.Redirect(string.IsNullOrWhiteSpace(redirectUri) ? "/" : redirectUri);
         });
+
+
+        // EXCEL EXPORT CODE
+
+        app.MapGet("/api/export/registrations", async (ExcelExportService exportService) =>
+        {
+            var fileBytes = await exportService.ExportRegistrationsAsync();
+            return Results.File(fileBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Registrations_{DateTime.Now:yyyyMMdd}.xlsx");
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+
+        // QR CODE 
+
+        app.MapGet("/api/qrcode", (QrCodeService qrService, HttpContext context) =>
+        {
+            var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
+            var registerUrl = $"{baseUrl}/register";
+            var pngBytes = qrService.GenerateQrCodePng(registerUrl);
+            return Results.File(pngBytes, "image/png", "RegistrationQRCode.png");
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
 
         // ✅ Map Razor Components with BOTH render modes
         app.MapRazorComponents<App>()

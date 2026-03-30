@@ -1,0 +1,186 @@
+﻿@page "/admin/seasons"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using OptimistClub_SoccerRegistration.Data
+@using OptimistClub_SoccerRegistration.Data.Models
+@attribute [Authorize(Roles = "Admin")]
+@inject ApplicationDbContext Context
+
+<h2>Season Registration</h2>
+
+<div class="card mb-4">
+    <div class="card-header">@(editingPeriod != null ? "Edit Period" : "Create New Period")</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2 mb-2">
+                <label class="form-label">Season Year</label>
+                <input type="number" class="form-control" @bind="formYear" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-control" @bind="formStart" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-control" @bind="formEnd" />
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="form-label">Active</label>
+                <select class="form-select" @bind="formActive">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2 d-flex align-items-end">
+                <button class="btn btn-primary me-2" @onclick="SavePeriod">Save</button>
+                @if (editingPeriod != null)
+                {
+                    <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (periods == null)
+{
+    <p>Loading season registration data</p>
+}
+else if (periods.Count == 0)
+{
+    <p>There isn't any season registration data</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Season Year</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in periods)
+            {
+                <tr>
+                    <td>@p.SeasonYear</td>
+                    <td>@p.StartDate.ToShortDateString()</td>
+                    <td>@p.EndDate.ToShortDateString()</td>
+                    <td>
+                        @if (p.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditPeriod(p)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeletePeriod(p.PeriodId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RegistrationPeriod>? periods;
+    private RegistrationPeriod? editingPeriod;
+
+    private int formYear = DateTime.Now.Year;
+    private DateTime formStart = DateTime.Today;
+    private DateTime formEnd = DateTime.Today.AddMonths(3);
+    private bool formActive = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        periods = await Context.RegistrationPeriods
+            .OrderByDescending(p => p.SeasonYear)
+            .ToListAsync();
+    }
+
+    private async Task SavePeriod()
+    {
+        if (formActive)
+        {
+            var otherActive = await Context.RegistrationPeriods
+                .Where(p => p.IsActive && (editingPeriod == null || p.PeriodId != editingPeriod.PeriodId))
+                .ToListAsync();
+            foreach (var op in otherActive)
+            {
+                op.IsActive = false;
+            }
+        }
+
+        if (editingPeriod != null)
+        {
+            editingPeriod.SeasonYear = formYear;
+            editingPeriod.StartDate = formStart;
+            editingPeriod.EndDate = formEnd;
+            editingPeriod.IsActive = formActive;
+            Context.RegistrationPeriods.Update(editingPeriod);
+        }
+        else
+        {
+            var newPeriod = new RegistrationPeriod
+            {
+                SeasonYear = formYear,
+                StartDate = formStart,
+                EndDate = formEnd,
+                IsActive = formActive
+            };
+            Context.RegistrationPeriods.Add(newPeriod);
+        }
+
+        await Context.SaveChangesAsync();
+        editingPeriod = null;
+        ResetForm();
+        await LoadData();
+    }
+
+    private void EditPeriod(RegistrationPeriod p)
+    {
+        editingPeriod = p;
+        formYear = p.SeasonYear;
+        formStart = p.StartDate;
+        formEnd = p.EndDate;
+        formActive = p.IsActive;
+    }
+
+    private void CancelEdit()
+    {
+        editingPeriod = null;
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
+        formYear = DateTime.Now.Year;
+        formStart = DateTime.Today;
+        formEnd = DateTime.Today.AddMonths(3);
+        formActive = true;
+    }
+
+    private async Task DeletePeriod(int id)
+    {
+        var period = await Context.RegistrationPeriods.FindAsync(id);
+        if (period != null)
+        {
+            Context.RegistrationPeriods.Remove(period);
+            await Context.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

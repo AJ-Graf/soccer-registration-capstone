@@ -1,0 +1,43 @@
+﻿@page "/admin/qrcode"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using OptimistClub_SoccerRegistration.Services
+@attribute [Authorize(Roles = "Admin")]
+@inject QrCodeService QrCodeService
+@inject NavigationManager NavigationManager
+
+<h2>QR Code</h2>
+
+<p class="text-muted">
+    The generated QR code is linked to the registration page.
+</p>
+
+<div class="card" style="max-width: 400px;">
+    <div class="card-body text-center">
+        @if (!string.IsNullOrEmpty(qrBase64))
+        {
+            <img src="data:image/png;base64,@qrBase64" alt="Registration QR Code"
+                 class="img-fluid mb-3" style="max-width: 300px;" />
+            <p class="text-muted small">@registrationUrl</p>
+            <a href="/api/qrcode" class="btn btn-success" download="RegistrationQRCode.png">
+                Download the QR code
+            </a>
+        }
+        else
+        {
+            <p>Creating the QR code</p>
+        }
+    </div>
+</div>
+
+@code {
+    private string? qrBase64;
+    private string registrationUrl = "";
+
+    protected override void OnInitialized()
+    {
+        var baseUrl = NavigationManager.BaseUri.TrimEnd('/');
+        registrationUrl = $"{baseUrl}/register";
+        qrBase64 = QrCodeService.GenerateQrCodeBase64(registrationUrl);
+    }
+}

@@ -16,409 +16,424 @@
     @L["Intro"]
 </p>
 
-<EditForm Model="model" OnValidSubmit="Submit" OnInvalidSubmit="HandleInvalidSubmit">
-    <DataAnnotationsValidator />
+@if (!registrationOpen)
+{
+    <div class="alert alert-warning">
+        <strong>@L["RegistrationClosed"]</strong>
+    </div>
+}
+else
+{
 
-    @if (showMandatoryFieldsWarning && validationErrors.Any())
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <div class="d-flex align-items-start">
-                <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
-                <div>
-                    <strong>@L["MandatoryFields"]</strong>
-                    <ul class="mb-0 mt-2 ps-3">
-                        @foreach (var error in validationErrors)
-                        {
-                            <li>@error</li>
-                        }
-                    </ul>
-                </div>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    }
+    <EditForm Model="model" OnValidSubmit="Submit" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
 
-    @if (!string.IsNullOrWhiteSpace(errorMessage))
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Error:</strong> @errorMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(successMessage))
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Success:</strong> @successMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    <div class="card mb-4">
-        <div class="card-header">@L["PlayerInfo"]</div>
-        <div class="card-body">
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                   <label class="form-label" for="playerFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
-                    <input id="playerFirstName"
-                           name="playerFirstName"
-                           class="form-control"
-                           autocomplete="given-name"
-                           @bind="model.Player.FirstName" />
-                    <ValidationMessage For="@(() => model.Player.FirstName)" />
-                </div>
-
-                <div class="col-md-6 mb-3">
-                   <label class="form-label" for="playerLastName">@L["LastName"] <span class="text-danger">*</span></label>
-                    <input id="playerLastName"
-                           name="playerLastName"
-                           class="form-control"
-                           autocomplete="family-name"
-                           @bind="model.Player.LastName" />
-                    <ValidationMessage For="@(() => model.Player.LastName)" />
+        @if (showMandatoryFieldsWarning && validationErrors.Any())
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+                    <div>
+                        <strong>@L["MandatoryFields"]</strong>
+                        <ul class="mb-0 mt-2 ps-3">
+                            @foreach (var error in validationErrors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
+        }
 
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                   <label class="form-label" for="playerGender">@L["Gender"] <span class="text-danger">*</span></label>
-                    <select id="playerGender"
-                            name="playerGender"
-                            class="form-select"
-                            @bind="model.Player.Gender">
-                        <option value="">@L["Select"]</option>
-                        <option value="Male">@L["Male"]</option>
-                        <option value="Female">@L["Female"]</option>
-                    </select>
-                    <ValidationMessage For="@(() => model.Player.Gender)" />
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label" for="playerTown">@L["Town"]</label>
-                    <input id="playerTown"
-                           name="playerTown"
-                           class="form-control"
-                           autocomplete="address-level2"
-                           @bind="model.Player.Town" />
-                </div>
-
-                <div class="col-md-4 mb-3">
-                   <label class="form-label" for="playerDob">@L["DateOfBirth"] <span class="text-danger">*</span></label>
-                    <input id="playerDob"
-                           name="playerDob"
-                           type="date"
-                           class="form-control"
-                           @bind="model.Player.DateOfBirth"
-                           @bind:format="yyyy-MM-dd" />
-                    <ValidationMessage For="@(() => model.Player.DateOfBirth)" />
-                </div>
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error:</strong> @errorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        }
 
-            <div class="mb-3">
-               <label class="form-label" for="playerShirtSize">@L["ChildShirtSize"] <span class="text-danger">*</span></label>
-                <select id="playerShirtSize"
-                        name="playerShirtSize"
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success:</strong> @successMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="alert alert-info">
+            <strong>@L["PaymentTitle"]</strong><br />
+            @L["PaymentInstructions"]
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">@L["PlayerInfo"]</div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="playerFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
+                        <input id="playerFirstName"
+                        name="playerFirstName"
+                        class="form-control"
+                        autocomplete="given-name"
+                        @bind="model.Player.FirstName" />
+                        <ValidationMessage For="@(() => model.Player.FirstName)" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="playerLastName">@L["LastName"] <span class="text-danger">*</span></label>
+                        <input id="playerLastName"
+                        name="playerLastName"
+                        class="form-control"
+                        autocomplete="family-name"
+                        @bind="model.Player.LastName" />
+                        <ValidationMessage For="@(() => model.Player.LastName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="playerGender">@L["Gender"] <span class="text-danger">*</span></label>
+                        <select id="playerGender"
+                        name="playerGender"
                         class="form-select"
-                        @bind="model.Player.ShirtSize">
-                    <option value="">@L["Select"]</option>
-                    <option value="ChildXS">@L["ChildXS"]</option>
-                    <option value="ChildS">@L["ChildS"]</option>
-                    <option value="ChildM">@L["ChildM"]</option>
-                    <option value="ChildL">@L["ChildL"]</option>
-                </select>
-                <ValidationMessage For="@(() => model.Player.ShirtSize)" />
-            </div>
-
-            <div class="alert alert-warning">
-                @L["Important2022"]
-            </div>
-
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">@L["ParentInfo"]</div>
-        <div class="card-body">
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                   <label class="form-label" for="parentFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
-                    <input id="parentFirstName"
-                           name="parentFirstName"
-                           class="form-control"
-                           autocomplete="given-name"
-                           @bind="model.Parent.FirstName" />
-                    <ValidationMessage For="@(() => model.Parent.FirstName)" />
-                </div>
-
-                <div class="col-md-6 mb-3">
-                   <label class="form-label" for="parentLastName">@L["LastName"] <span class="text-danger">*</span></label>
-                    <input id="parentLastName"
-                           name="parentLastName"
-                           class="form-control"
-                           autocomplete="family-name"
-                           @bind="model.Parent.LastName" />
-                    <ValidationMessage For="@(() => model.Parent.LastName)" />
-                </div>
-            </div>
-
-            <div class="mb-3">
-               <label class="form-label" for="parentPhone">@L["Phone"] <span class="text-danger">*</span></label>
-                <input id="parentPhone"
-                       name="parentPhone"
-                       class="form-control"
-                       autocomplete="tel"
-                       inputmode="tel"
-                       @bind="model.Parent.Phone" />
-                <ValidationMessage For="@(() => model.Parent.Phone)" />
-            </div>
-
-            <div class="mb-3">
-               <label class="form-label" for="parentEmail">@L["Email"] <span class="text-danger">*</span></label>
-                <input id="parentEmail"
-                       name="parentEmail"
-                       type="email"
-                       class="form-control"
-                       autocomplete="email"
-                       inputmode="email"
-                       @bind="model.Parent.Email" />
-                <ValidationMessage For="@(() => model.Parent.Email)" />
-            </div>
-
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">@L["SiblingInfo"]</div>
-        <div class="card-body">
-
-            @if (model.Siblings.Count == 0)
-            {
-                <p class="text-muted mb-3">@L["NoSiblingsAdded"]</p>
-            }
-
-            @for (int i = 0; i < model.Siblings.Count; i++)
-            {
-                var index = i;
-
-                <div class="border rounded p-3 mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="text-muted mb-0">@L["Sibling"] @(index + 1)</h6>
-
-                        <button type="button"
-                                class="btn btn-outline-danger btn-sm"
-                                aria-label="@($"{L["RemoveSibling"]} {index + 1}")"
-                                @onclick="() => RemoveSibling(index)">
-                            @L["RemoveSibling"]
-                        </button>
+                        @bind="model.Player.Gender">
+                            <option value="">@L["Select"]</option>
+                            <option value="Male">@L["Male"]</option>
+                            <option value="Female">@L["Female"]</option>
+                        </select>
+                        <ValidationMessage For="@(() => model.Player.Gender)" />
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="siblingFirstName_@index">@L["FirstName"]</label>
-                            <input id="siblingFirstName_@index"
-                                   name="siblingFirstName_@index"
-                                   class="form-control"
-                                   autocomplete="given-name"
-                                   @bind="model.Siblings[index].FirstName" />
-                            <ValidationMessage For="@(() => model.Siblings[index].FirstName)" />
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="siblingLastName_@index">@L["LastName"]</label>
-                            <input id="siblingLastName_@index"
-                                   name="siblingLastName_@index"
-                                   class="form-control"
-                                   autocomplete="family-name"
-                                   @bind="model.Siblings[index].LastName" />
-                            <ValidationMessage For="@(() => model.Siblings[index].LastName)" />
-                        </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="playerTown">@L["Town"]</label>
+                        <input id="playerTown"
+                        name="playerTown"
+                        class="form-control"
+                        autocomplete="address-level2"
+                        @bind="model.Player.Town" />
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingGender_@index">@L["Gender"]</label>
-                            <select id="siblingGender_@index"
-                                    name="siblingGender_@index"
-                                    class="form-select"
-                                    @bind="model.Siblings[index].Gender">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="playerDob">@L["DateOfBirth"] <span class="text-danger">*</span></label>
+                        <input id="playerDob"
+                        name="playerDob"
+                        type="date"
+                        class="form-control"
+                        @bind="model.Player.DateOfBirth"
+                        @bind:format="yyyy-MM-dd" />
+                        <ValidationMessage For="@(() => model.Player.DateOfBirth)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="playerShirtSize">@L["ChildShirtSize"] <span class="text-danger">*</span></label>
+                    <select id="playerShirtSize"
+                    name="playerShirtSize"
+                    class="form-select"
+                    @bind="model.Player.ShirtSize">
+                        <option value="">@L["Select"]</option>
+                        <option value="ChildXS">@L["ChildXS"]</option>
+                        <option value="ChildS">@L["ChildS"]</option>
+                        <option value="ChildM">@L["ChildM"]</option>
+                        <option value="ChildL">@L["ChildL"]</option>
+                    </select>
+                    <ValidationMessage For="@(() => model.Player.ShirtSize)" />
+                </div>
+
+                <div class="alert alert-warning">
+                    @L["Important2022"]
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">@L["ParentInfo"]</div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="parentFirstName">@L["FirstName"] <span class="text-danger">*</span></label>
+                        <input id="parentFirstName"
+                        name="parentFirstName"
+                        class="form-control"
+                        autocomplete="given-name"
+                        @bind="model.Parent.FirstName" />
+                        <ValidationMessage For="@(() => model.Parent.FirstName)" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="parentLastName">@L["LastName"] <span class="text-danger">*</span></label>
+                        <input id="parentLastName"
+                        name="parentLastName"
+                        class="form-control"
+                        autocomplete="family-name"
+                        @bind="model.Parent.LastName" />
+                        <ValidationMessage For="@(() => model.Parent.LastName)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="parentPhone">@L["Phone"] <span class="text-danger">*</span></label>
+                    <input id="parentPhone"
+                    name="parentPhone"
+                    class="form-control"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    @bind="model.Parent.Phone" />
+                    <ValidationMessage For="@(() => model.Parent.Phone)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="parentEmail">@L["Email"] <span class="text-danger">*</span></label>
+                    <input id="parentEmail"
+                    name="parentEmail"
+                    type="email"
+                    class="form-control"
+                    autocomplete="email"
+                    inputmode="email"
+                    @bind="model.Parent.Email" />
+                    <ValidationMessage For="@(() => model.Parent.Email)" />
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">@L["SiblingInfo"]</div>
+            <div class="card-body">
+
+                @if (model.Siblings.Count == 0)
+                {
+                    <p class="text-muted mb-3">@L["NoSiblingsAdded"]</p>
+                }
+
+                @for (int i = 0; i < model.Siblings.Count; i++)
+                {
+                    var index = i;
+
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-muted mb-0">@L["Sibling"] @(index + 1)</h6>
+
+                            <button type="button"
+                            class="btn btn-outline-danger btn-sm"
+                            aria-label="@($"{L["RemoveSibling"]} {index + 1}")"
+                            @onclick="() => RemoveSibling(index)">
+                                @L["RemoveSibling"]
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="siblingFirstName_@index">@L["FirstName"]</label>
+                                <input id="siblingFirstName_@index"
+                                name="siblingFirstName_@index"
+                                class="form-control"
+                                autocomplete="given-name"
+                                @bind="model.Siblings[index].FirstName" />
+                                <ValidationMessage For="@(() => model.Siblings[index].FirstName)" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="siblingLastName_@index">@L["LastName"]</label>
+                                <input id="siblingLastName_@index"
+                                name="siblingLastName_@index"
+                                class="form-control"
+                                autocomplete="family-name"
+                                @bind="model.Siblings[index].LastName" />
+                                <ValidationMessage For="@(() => model.Siblings[index].LastName)" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="siblingGender_@index">@L["Gender"]</label>
+                                <select id="siblingGender_@index"
+                                name="siblingGender_@index"
+                                class="form-select"
+                                @bind="model.Siblings[index].Gender">
+                                    <option value="">@L["Select"]</option>
+                                    <option value="Male">@L["Male"]</option>
+                                    <option value="Female">@L["Female"]</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="siblingTown_@index">@L["Town"]</label>
+                                <input id="siblingTown_@index"
+                                name="siblingTown_@index"
+                                class="form-control"
+                                autocomplete="address-level2"
+                                @bind="model.Siblings[index].Town" />
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="siblingDob_@index">@L["DateOfBirth"]</label>
+                                <input id="siblingDob_@index"
+                                name="siblingDob_@index"
+                                type="date"
+                                class="form-control"
+                                @bind="model.Siblings[index].DateOfBirth"
+                                @bind:format="yyyy-MM-dd" />
+                                <ValidationMessage For="@(() => model.Siblings[index].DateOfBirth)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="siblingShirtSize_@index">@L["ChildShirtSize"]</label>
+                            <select id="siblingShirtSize_@index"
+                            name="siblingShirtSize_@index"
+                            class="form-select"
+                            @bind="model.Siblings[index].ShirtSize">
                                 <option value="">@L["Select"]</option>
-                                <option value="Male">@L["Male"]</option>
-                                <option value="Female">@L["Female"]</option>
+                                <option value="ChildXS">@L["ChildXS"]</option>
+                                <option value="ChildS">@L["ChildS"]</option>
+                                <option value="ChildM">@L["ChildM"]</option>
+                                <option value="ChildL">@L["ChildL"]</option>
                             </select>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingTown_@index">@L["Town"]</label>
-                            <input id="siblingTown_@index"
-                                   name="siblingTown_@index"
-                                   class="form-control"
-                                   autocomplete="address-level2"
-                                   @bind="model.Siblings[index].Town" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label" for="siblingDob_@index">@L["DateOfBirth"]</label>
-                            <input id="siblingDob_@index"
-                                   name="siblingDob_@index"
-                                   type="date"
-                                   class="form-control"
-                                   @bind="model.Siblings[index].DateOfBirth"
-                                   @bind:format="yyyy-MM-dd" />
-                            <ValidationMessage For="@(() => model.Siblings[index].DateOfBirth)" />
+                            <ValidationMessage For="@(() => model.Siblings[index].ShirtSize)" />
                         </div>
                     </div>
+                }
 
-                    <div class="mb-3">
-                        <label class="form-label" for="siblingShirtSize_@index">@L["ChildShirtSize"]</label>
-                        <select id="siblingShirtSize_@index"
-                                name="siblingShirtSize_@index"
-                                class="form-select"
-                                @bind="model.Siblings[index].ShirtSize">
-                            <option value="">@L["Select"]</option>
-                            <option value="ChildXS">@L["ChildXS"]</option>
-                            <option value="ChildS">@L["ChildS"]</option>
-                            <option value="ChildM">@L["ChildM"]</option>
-                            <option value="ChildL">@L["ChildL"]</option>
-                        </select>
-                        <ValidationMessage For="@(() => model.Siblings[index].ShirtSize)" />
-                    </div>
-                </div>
-            }
-
-            <button type="button"
-                    class="btn btn-outline-secondary btn-sm"
-                    @onclick="AddSibling">
-                @L["AddSibling"]
-            </button>
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">@L["VolunteerInfo"]</div>
-        <div class="card-body">
-            <p class="text-muted">
-                @L["VolunteerText"]
-            </p>
-
-            <div class="form-check mb-3">
-                <input id="volunteerToggle"
-                       class="form-check-input"
-                       type="checkbox"
-                       @bind="model.IsVolunteer"
-                       @bind:event="onchange"
-                       aria-expanded="@model.IsVolunteer.ToString().ToLowerInvariant()"
-                       aria-controls="volunteerDetails" />
-                <label class="form-check-label" for="volunteerToggle">
-                    @L["VolunteerQuestion"]
-                </label>
+                <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                @onclick="AddSibling">
+                    @L["AddSibling"]
+                </button>
             </div>
+        </div>
 
-            @if (model.IsVolunteer)
+        <div class="card mb-4">
+            <div class="card-header">@L["VolunteerInfo"]</div>
+            <div class="card-body">
+                <p class="text-muted">
+                    @L["VolunteerText"]
+                </p>
+
+                <div class="form-check mb-3">
+                    <input id="volunteerToggle"
+                    class="form-check-input"
+                    type="checkbox"
+                    @bind="model.IsVolunteer"
+                    @bind:event="onchange"
+                    aria-expanded="@model.IsVolunteer.ToString().ToLowerInvariant()"
+                    aria-controls="volunteerDetails" />
+                    <label class="form-check-label" for="volunteerToggle">
+                        @L["VolunteerQuestion"]
+                    </label>
+                </div>
+
+                @if (model.IsVolunteer)
+                {
+                    <div id="volunteerDetails">
+                        <div class="mb-3">
+                            <label class="form-label" for="volunteerRole">@L["VolunteerRole"] <span class="text-danger">*</span></label>
+                            <select id="volunteerRole"
+                            name="volunteerRole"
+                            class="form-select"
+                            @bind="model.Volunteer.Role">
+                                <option value="">@L["Select"]</option>
+                                <option value="Coach">@L["Coach"]</option>
+                                <option value="Referee">@L["Referee"]</option>
+                            </select>
+                            <ValidationMessage For="@(() => model.Volunteer.Role)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="criminalCheck">@L["CriminalCheck"] <span class="text-danger">*</span></label>
+                            <select id="criminalCheck"
+                            name="criminalCheck"
+                            class="form-select"
+                            @bind="model.Volunteer.CriminalCheck">
+                                <option value="">@L["Select"]</option>
+                                <option value="Yes">@L["Yes"]</option>
+                                <option value="No">@L["No"]</option>
+                            </select>
+                            <ValidationMessage For="@(() => model.Volunteer.CriminalCheck)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="volunteerShirtSize">@L["VolunteerShirtSize"] <span class="text-danger">*</span></label>
+                            <select id="volunteerShirtSize"
+                            name="volunteerShirtSize"
+                            class="form-select"
+                            @bind="model.Volunteer.ShirtSize">
+                                <option value="">@L["Select"]</option>
+                                <option value="AdultS">@L["AdultS"]</option>
+                                <option value="AdultM">@L["AdultM"]</option>
+                                <option value="AdultL">@L["AdultL"]</option>
+                                <option value="AdultXL">@L["AdultXL"]</option>
+                                <option value="AdultXXL">@L["AdultXXL"]</option>
+                            </select>
+                            <ValidationMessage For="@(() => model.Volunteer.ShirtSize)" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">@L["WaiverTitle"]</div>
+            <div class="card-body">
+
+                <p class="text-muted">
+                    @L["WaiverIntro"]
+                </p>
+
+                <div class="border rounded p-3 mb-3 bg-light">
+                    <ol class="mb-3 ps-3">
+                        <li class="mb-2">@L["Waiver_Insurance"]</li>
+                        <li class="mb-2">@L["Waiver_Volunteers"]</li>
+                        <li class="mb-2">@L["Waiver_ParentPresence"]</li>
+                        <li class="mb-2">@L["Waiver_Activity"]</li>
+                    </ol>
+
+                    <p class="mb-2">@L["Waiver_AuthorizePlay"]</p>
+                    <p class="mb-2">@L["Waiver_Release"]</p>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="electronicSignature">
+                        @L["ElectronicSignature"] <span class="text-danger">*</span>
+                    </label>
+                    <input id="electronicSignature"
+                    name="electronicSignature"
+                    class="form-control"
+                    @bind="model.ElectronicSignature"
+                    autocomplete="name" />             
+                </div>
+
+                <div class="form-check">
+                    <input id="waiverAccepted"
+                    class="form-check-input"
+                    type="checkbox"
+                    @bind="model.WaiverAccepted" />
+                    <label class="form-check-label" for="waiverAccepted">
+                        @L["WaiverCheckbox"] <span class="text-danger">*</span>
+                    </label>                
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+            @if (isSubmitting)
             {
-                <div id="volunteerDetails">
-                    <div class="mb-3">
-                       <label class="form-label" for="volunteerRole">@L["VolunteerRole"] <span class="text-danger">*</span></label>
-                        <select id="volunteerRole"
-                                name="volunteerRole"
-                                class="form-select"
-                                @bind="model.Volunteer.Role">
-                            <option value="">@L["Select"]</option>
-                            <option value="Coach">@L["Coach"]</option>
-                            <option value="Referee">@L["Referee"]</option>
-                        </select>
-                        <ValidationMessage For="@(() => model.Volunteer.Role)" />
-                    </div>
-
-                    <div class="mb-3">
-                       <label class="form-label" for="criminalCheck">@L["CriminalCheck"] <span class="text-danger">*</span></label>
-                        <select id="criminalCheck"
-                                name="criminalCheck"
-                                class="form-select"
-                                @bind="model.Volunteer.CriminalCheck">
-                            <option value="">@L["Select"]</option>
-                            <option value="Yes">@L["Yes"]</option>
-                            <option value="No">@L["No"]</option>
-                        </select>
-                        <ValidationMessage For="@(() => model.Volunteer.CriminalCheck)" />
-                    </div>
-
-                    <div class="mb-3">
-                       <label class="form-label" for="volunteerShirtSize">@L["VolunteerShirtSize"] <span class="text-danger">*</span></label>
-                        <select id="volunteerShirtSize"
-                                name="volunteerShirtSize"
-                                class="form-select"
-                                @bind="model.Volunteer.ShirtSize">
-                            <option value="">@L["Select"]</option>
-                            <option value="AdultS">@L["AdultS"]</option>
-                            <option value="AdultM">@L["AdultM"]</option>
-                            <option value="AdultL">@L["AdultL"]</option>
-                            <option value="AdultXL">@L["AdultXL"]</option>
-                            <option value="AdultXXL">@L["AdultXXL"]</option>
-                        </select>
-                        <ValidationMessage For="@(() => model.Volunteer.ShirtSize)" />
-                    </div>
-                </div>
+                <span>@L["Saving"]</span>
             }
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">@L["WaiverTitle"]</div>
-        <div class="card-body">
-
-            <p class="text-muted">
-                @L["WaiverIntro"]
-            </p>
-
-            <div class="border rounded p-3 mb-3 bg-light">
-                <ol class="mb-3 ps-3">
-                    <li class="mb-2">@L["Waiver_Insurance"]</li>
-                    <li class="mb-2">@L["Waiver_Volunteers"]</li>
-                    <li class="mb-2">@L["Waiver_ParentPresence"]</li>
-                    <li class="mb-2">@L["Waiver_Activity"]</li>
-                </ol>
-
-                <p class="mb-2">@L["Waiver_AuthorizePlay"]</p>
-                <p class="mb-2">@L["Waiver_Release"]</p>
-                
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label" for="electronicSignature">
-                    @L["ElectronicSignature"] <span class="text-danger">*</span>
-                </label>
-                <input id="electronicSignature"
-                       name="electronicSignature"
-                       class="form-control"
-                       @bind="model.ElectronicSignature"
-                       autocomplete="name" />             
-             </div>
-
-            <div class="form-check">
-                <input id="waiverAccepted"
-                       class="form-check-input"
-                       type="checkbox"
-                       @bind="model.WaiverAccepted" />
-                <label class="form-check-label" for="waiverAccepted">
-                   @L["WaiverCheckbox"] <span class="text-danger">*</span>
-                </label>                
-            </div>
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
-        @if (isSubmitting)
-        {
-           <span>@L["Saving"]</span>
-        }
-        else
-        {
-            @L["Submit"]
-        }
-    </button>
-</EditForm>
+            else
+            {
+                @L["Submit"]
+            }
+        </button>
+    </EditForm>
+}
 
 @code {
     private bool isSubmitting;
@@ -772,5 +787,13 @@
         public string? Town { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? ShirtSize { get; set; }
+    }
+
+    private bool registrationOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var activePeriod = await RegistrationService.GetActiveRegistrationPeriodAsync();
+        registrationOpen = activePeriod != null;
     }
 }
