@@ -372,4 +372,9 @@
   <data name="RegisterNow" xml:space="preserve">
     <value>Register Now </value>
   </data>
+	<data name="PaymentInstructions" xml:space="preserve">
+    <value>Payment Instructions </value>
+  </data>
+
+	
 </root>

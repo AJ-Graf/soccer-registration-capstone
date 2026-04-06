@@ -19,6 +19,15 @@ internal class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
+        // Show detailed server-side Blazor circuit errors in development to aid debugging
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.Configure<Microsoft.AspNetCore.Components.Server.CircuitOptions>(options =>
+            {
+                options.DetailedErrors = true;
+            });
+        }
+
         // ✅ Localization (reads Resources/*.resx)
         builder.Services.AddLocalization(options =>
         {
@@ -53,6 +62,7 @@ internal class Program
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+        
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
@@ -62,6 +72,7 @@ internal class Program
         {
             options.SignIn.RequireConfirmedAccount = true;
         })
+            
 
    .AddRoles<IdentityRole>()
    .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -77,6 +88,19 @@ internal class Program
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
+
+            // Ensure latest migrations are applied on startup so the database matches the model
+            try
+            {
+                var db = services.GetRequiredService<ApplicationDbContext>();
+                db.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while migrating or initializing the database.");
+                throw; // rethrow so startup fails loudly when migration fails
+            }
 
             await SeedData.InitializeAsync(services);
         }

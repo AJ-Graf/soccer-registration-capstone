@@ -45,13 +45,6 @@
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
 </div>
 
 @code {
@@ -65,7 +58,7 @@
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
-    public async Task RegisterUser(EditContext editContext)
+    public async Task RegisterUser()
     {
         var user = CreateUser();
 
