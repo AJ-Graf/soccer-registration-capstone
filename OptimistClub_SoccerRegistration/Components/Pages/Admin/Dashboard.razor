@@ -172,7 +172,7 @@
                         <td>@p.Gender</td>
                         <td>@p.DateOfBirth.ToShortDateString()</td>
                         <td>@p.Town</td>
-                        <td>@p.ShirtSize</td>
+                        <td>@FormatShirtSize(p.ShirtSize)</td>
                         <td>@p.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditPlayer(p)">Edit</button>
@@ -363,7 +363,7 @@
                         <td>@v.FirstName @v.LastName</td>
                         <td>@v.Role</td>
                         <td>@(v.CriminalCheckCompleted ? "Yes" : "No")</td>
-                        <td>@v.ShirtSize</td>
+                        <td>@FormatShirtSize(v.ShirtSize)</td>
                         <td>@v.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditVolunteer(v)">Edit</button>
@@ -518,6 +518,23 @@
         };
     }
 
+    private string FormatShirtSize(string? size)
+    {
+        return size switch
+        {
+            "ChildXS" => "Child XS",
+            "ChildS" => "Child S",
+            "ChildM" => "Child M",
+            "ChildL" => "Child L",
+            "AdultS" => "Adult S",
+            "AdultM" => "Adult M",
+            "AdultL" => "Adult L",
+            "AdultXL" => "Adult XL",
+            "AdultXXL" => "Adult XXL",
+            _ => size ?? ""
+        };
+    }
+
     private async Task SavePlayer()
     {
         if (editingPlayer != null)
@@ -621,4 +638,5 @@
     {
         await JS.InvokeVoidAsync("open", "/api/export/registrations", "_blank");
     }
+
 }
