@@ -14,5 +14,9 @@ namespace OptimistClub_SoccerRegistration.Data.Models
         public DateTime EndDate { get; set; }
 
         public bool IsActive { get; set; }
+
+        public DateTime? RegistrationOpenDate { get; set; }
+
+        public DateTime? RegistrationCloseDate { get; set; }
     }
 }

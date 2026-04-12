@@ -46,8 +46,22 @@ namespace OptimistClub_SoccerRegistration.Services
         {
             var today = DateTime.Today;
             return await _context.RegistrationPeriods
-                .Where(rp => rp.StartDate <= today && rp.EndDate >= today)
+                .Where(rp => rp.IsActive
+                    && (!rp.RegistrationOpenDate.HasValue || rp.RegistrationOpenDate.Value.Date <= today)
+                    && (!rp.RegistrationCloseDate.HasValue || rp.RegistrationCloseDate.Value.Date >= today))
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<RegistrationPeriod?> GetActiveSeasonAsync()
+        {
+            return await _context.RegistrationPeriods
+                .Where(rp => rp.IsActive)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> HasAnyRegistrationPeriodsAsync()
+        {
+            return await _context.RegistrationPeriods.AnyAsync();
         }
 
         public async Task<List<Registration>> GetAllRegistrationsAsync()
@@ -71,6 +85,7 @@ namespace OptimistClub_SoccerRegistration.Services
         public async Task<List<Parent>> GetAllParentsAsync()
         {
             return await _context.Parents
+                .Include(p => p.Players)
                 .OrderByDescending(p => p.DateAdded)
                 .ToListAsync();
         }

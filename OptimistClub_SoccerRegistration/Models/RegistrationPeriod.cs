@@ -19,6 +19,10 @@ public partial class RegistrationPeriod
 
     public bool IsActive { get; set; }
 
+    public DateTime? RegistrationOpenDate { get; set; }
+
+    public DateTime? RegistrationCloseDate { get; set; }
+
     [InverseProperty("Period")]
     public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

@@ -10,15 +10,49 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<h2>@L["Title"]</h2>
+<!-- Hero Banner -->
+<section class="page-hero" aria-label="@L["Title"]">
+<div class="page-hero-overlay" aria-hidden="true"></div>
+    <div class="container position-relative" style="z-index:1;">
+        <div class="row justify-content-center text-center py-4">
+            <div class="col-lg-8">
+                <span class="badge page-hero-badge mb-3">
+                    <span aria-hidden="true">&#9917;</span> @(seasonYear.HasValue ? seasonYear.Value.ToString() : "")
+                </span>
+                <h1 class="page-hero-title">@L["Title"]</h1>
+                <p class="page-hero-subtitle">@L["Intro"]</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-<p class="text-muted">
-    @L["Intro"]
-</p>
+<div class="page-form-container mt-4">
 
-@if (!registrationOpen)
+@if (registrationCompleted)
 {
-    <div class="alert alert-warning">
+    <div class="page-callout page-callout-success mb-4" role="alert">
+        <h3 class="h6 fw-bold mb-2">✅ @successMessage</h3>
+    </div>
+
+    <div class="page-card mb-4">
+        <div class="page-card-header">
+            <h2 class="h5 mb-0">@L["PaymentTitle"]</h2>
+        </div>
+        <div class="page-card-body">
+            <p>@L["PaymentInstructions_Intro"]</p>
+            <ul class="mb-0 ps-3">
+                <li>@L["PaymentInstructions_Cheque"]</li>
+                <li>@L["PaymentInstructions_ETransfer"]</li>
+                <li>@L["PaymentInstructions_Cash"]</li>
+            </ul>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" @onclick="RegisterAnother">@L["RegisterAnotherPlayer"]</button>
+}
+else if (!registrationOpen)
+{
+    <div class="page-callout page-callout-warning" role="alert">
         <strong>@L["RegistrationClosed"]</strong>
     </div>
 }
@@ -30,9 +64,8 @@ else
 
         @if (showMandatoryFieldsWarning && validationErrors.Any())
         {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="page-callout page-callout-danger mb-4" role="alert" aria-live="assertive">
                 <div class="d-flex align-items-start">
-                    <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
                     <div>
                         <strong>@L["MandatoryFields"]</strong>
                         <ul class="mb-0 mt-2 ps-3">
@@ -42,31 +75,30 @@ else
                             }
                         </ul>
                     </div>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         }
 
         @if (!string.IsNullOrWhiteSpace(errorMessage))
         {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="page-callout page-callout-danger mb-4" role="alert">
                 <strong>Error:</strong> @errorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
 
         @if (!string.IsNullOrWhiteSpace(successMessage))
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="page-callout page-callout-success mb-4" role="alert">
                 <strong>Success:</strong> @successMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
 
 
-        <div class="card mb-4">
-            <div class="card-header">@L["PlayerInfo"]</div>
-            <div class="card-body">
+        <div class="page-card mb-4">
+            <div class="page-card-header">
+                <h2 class="h5 mb-0">@L["PlayerInfo"]</h2>
+            </div>
+            <div class="page-card-body">
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -140,16 +172,18 @@ else
                     <ValidationMessage For="@(() => model.Player.ShirtSize)" />
                 </div>
 
-                <div class="alert alert-warning">
-                    @L["Important2022"]
+                <div class="page-callout page-callout-warning mt-3">
+                    @(seasonYear.HasValue ? string.Format(L["ImportantBirthYear"], seasonYear.Value - 4) : L["Important2022"])
                 </div>
 
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">@L["ParentInfo"]</div>
-            <div class="card-body">
+        <div class="page-card mb-4">
+            <div class="page-card-header">
+                <h2 class="h5 mb-0">@L["ParentInfo"]</h2>
+            </div>
+            <div class="page-card-body">
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -199,9 +233,11 @@ else
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">@L["SiblingInfo"]</div>
-            <div class="card-body">
+        <div class="page-card mb-4">
+            <div class="page-card-header">
+                <h2 class="h5 mb-0">@L["SiblingInfo"]</h2>
+            </div>
+            <div class="page-card-body">
 
                 @if (model.Siblings.Count == 0)
                 {
@@ -212,7 +248,7 @@ else
                 {
                     var index = i;
 
-                    <div class="border rounded p-3 mb-3">
+                    <div class="page-sibling-card">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="text-muted mb-0">@L["Sibling"] @(index + 1)</h6>
 
@@ -299,15 +335,18 @@ else
 
                 <button type="button"
                 class="btn btn-outline-secondary btn-sm"
+                aria-label="@L["AddSibling"]"
                 @onclick="AddSibling">
                     @L["AddSibling"]
                 </button>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">@L["VolunteerInfo"]</div>
-            <div class="card-body">
+        <div class="page-card mb-4">
+            <div class="page-card-header">
+                <h2 class="h5 mb-0">@L["VolunteerInfo"]</h2>
+            </div>
+            <div class="page-card-body">
                 <p class="text-muted">
                     @L["VolunteerText"]
                 </p>
@@ -374,16 +413,18 @@ else
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">@L["WaiverTitle"]</div>
-            <div class="card-body">
+        <div class="page-card mb-4">
+            <div class="page-card-header">
+                <h2 class="h5 mb-0">@L["WaiverTitle"]</h2>
+            </div>
+            <div class="page-card-body">
 
                 <p class="text-muted">
                     @L["WaiverIntro"]
                 </p>
 
-                <div class="border rounded p-3 mb-3 bg-light">
-                    <ol class="mb-3 ps-3">
+                <section class="border rounded p-3 mb-3 bg-light" aria-label="@L["WaiverTitle"]">
+                    <ol class="mb-3 ps-3" aria-label="@L["WaiverTitle"]">
                         <li class="mb-2">@L["Waiver_Insurance"]</li>
                         <li class="mb-2">@L["Waiver_Volunteers"]</li>
                         <li class="mb-2">@L["Waiver_ParentPresence"]</li>
@@ -393,7 +434,7 @@ else
                     <p class="mb-2">@L["Waiver_AuthorizePlay"]</p>
                     <p class="mb-2">@L["Waiver_Release"]</p>
 
-                </div>
+                </section>
 
                 <div class="mb-3">
                     <label class="form-label" for="electronicSignature">
@@ -418,10 +459,10 @@ else
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+        <button type="submit" class="btn btn-primary" disabled="@isSubmitting" aria-busy="@isSubmitting" aria-label="@(isSubmitting ? L["Saving"] : L["Submit"])">
             @if (isSubmitting)
             {
-                <span>@L["Saving"]</span>
+                <span aria-hidden="true">@L["Saving"]</span>
             }
             else
             {
@@ -431,9 +472,12 @@ else
     </EditForm>
 }
 
+</div>
+
 @code {
     private bool isSubmitting;
     private bool showMandatoryFieldsWarning;
+    private bool registrationCompleted;
     private string? successMessage;
     private string? errorMessage;
     private DateTime? waiverAcceptedOn;
@@ -442,6 +486,17 @@ else
     private RegistrationPageModel model = new();
 
     private void AddSibling() => model.Siblings.Add(new SiblingInfo());
+
+    private void RegisterAnother()
+    {
+        registrationCompleted = false;
+        successMessage = null;
+        errorMessage = null;
+        showMandatoryFieldsWarning = false;
+        validationErrors.Clear();
+        model = new RegistrationPageModel();
+        waiverAcceptedOn = null;
+    }
 
     private void RemoveSibling(int index)
     {
@@ -458,7 +513,7 @@ else
         var results = new List<ValidationResult>();
         Validator.TryValidateObject(model, context, results, true);
 
-        validationErrors = results.Select(r => r.ErrorMessage).ToList();
+        validationErrors = results.Select(r => r.ErrorMessage ?? string.Empty).ToList();
 
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
@@ -560,11 +615,11 @@ else
             }
 
             successMessage = L["RegistrationComplete"];
+            registrationCompleted = true;
             model = new RegistrationPageModel();
             waiverAcceptedOn = null;
-            
-            await Task.Delay(2000);
-            NavigationManager.NavigateTo("/");
+
+            await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
         }
         catch (Exception ex)
         {
@@ -786,10 +841,12 @@ else
     }
 
     private bool registrationOpen;
+    private int? seasonYear;
 
     protected override async Task OnInitializedAsync()
     {
         var activePeriod = await RegistrationService.GetActiveRegistrationPeriodAsync();
         registrationOpen = activePeriod != null;
+        seasonYear = activePeriod?.SeasonYear;
     }
 }

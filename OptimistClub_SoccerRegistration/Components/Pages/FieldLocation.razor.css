@@ -1,0 +1,98 @@
+.field-selector {
+    margin-bottom: 1rem;
+}
+
+.field-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 2px solid #0b3a6f;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #0b3a6f;
+    font-size: 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.field-btn:hover {
+    background-color: #f2f5f9;
+    box-shadow: 0 0 0 3px rgba(11, 58, 111, 0.15);
+    transform: translateY(-1px);
+}
+
+.field-btn.active {
+    background-color: #c9a44c;
+    color: #0b3a6f;
+    border-color: #c9a44c;
+    box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.4);
+}
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 340px);
+    min-height: 300px;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid #e5e9ef;
+}
+
+.map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background: transparent;
+    cursor: default;
+}
+
+.field-marker {
+    position: absolute;
+    z-index: 10;
+    background-color: rgba(11, 58, 111, 0.92);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: marker-pop 0.25s ease-out;
+}
+
+.field-marker::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(11, 58, 111, 0.92);
+}
+
+@keyframes marker-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

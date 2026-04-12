@@ -1,8 +1,12 @@
 ﻿
 @implements IDisposable
 @using Microsoft.Extensions.Localization
+@using Microsoft.EntityFrameworkCore
+@using OptimistClub_SoccerRegistration.Data
+@using OptimistClub_SoccerRegistration.Services
 @inject IStringLocalizer<NavMenu> L
 @inject NavigationManager NavigationManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 <div class="top-row navbar navbar-dark">
     <div class="container-fluid px-3">
@@ -15,19 +19,38 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox"
+id="navbar-toggler"
+title="Navigation menu"
+class="navbar-toggler"
+aria-label="Toggle navigation menu"
+aria-expanded="false"
+aria-controls="nav-scrollable" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div id="nav-scrollable" class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column nav-menu">
 
         <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-            <span class="bi bi-house-door-fill-nav-menu"></span>
+            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
             @L["Home"]
         </NavLink>
 
-        <NavLink class="nav-link" href="register">
-            <span class="bi bi-pencil-square-nav-menu"></span>
-            @L["Register"]
+        @if (registrationOpen)
+        {
+            <NavLink class="nav-link" href="register">
+                <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span>
+                @L["RegisterPlayer"]
+            </NavLink>
+
+            <NavLink class="nav-link" href="volunteer">
+                <span class="bi bi-person-raised-hand-nav-menu" aria-hidden="true"></span>
+                @L["RegisterVolunteer"]
+            </NavLink>
+        }
+
+        <NavLink class="nav-link" href="field-location">
+            <span class="bi bi-geo-alt-fill-nav-menu" aria-hidden="true"></span>
+            @L["FieldLocation"]
         </NavLink>
 
         <AuthorizeView>
@@ -35,7 +58,7 @@
                 <div class="nav-divider"></div>
 
                 <NavLink class="nav-link" href="/Account/Manage">
-                    <span class="bi bi-person-fill-nav-menu"></span>
+                    <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
                     @context.User.Identity?.Name
                 </NavLink>        
 
@@ -43,7 +66,7 @@
                     <AntiforgeryToken />
                     <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                     <button type="submit" class="nav-link btn-logout">
-                        <span class="bi bi-arrow-bar-left-nav-menu"></span>
+                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>
                         @L["Logout"]
                     </button>
                 </form>
@@ -53,7 +76,7 @@
                 <div class="nav-divider"></div>
 
                 <NavLink class="nav-link" href="/Account/Login">
-                    <span class="bi bi-person-badge-nav-menu"></span>
+                    <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span>
                     @L["AdminLogin"]
                 </NavLink>
             </NotAuthorized>
@@ -68,6 +91,7 @@
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="admin/teams">
                     <span class="bi bi-people" aria-hidden="true"></span> Teams
+                    <span class="badge bg-info ms-1">@teamCount</span>
                 </NavLink>
             </div>
             <div class="nav-item px-3">
@@ -78,6 +102,18 @@
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="admin/seasons">
                     <span class="bi bi-clock" aria-hidden="true"></span> Seasons
+                    @if (!hasSeasons)
+                    {
+                        <span class="badge bg-secondary ms-1">N/A</span>
+                    }
+                    else if (seasonActive)
+                    {
+                        <span class="badge bg-success ms-1">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger ms-1">Closed</span>
+                    }
                 </NavLink>
             </div>
             <div class="nav-item px-3">
@@ -97,11 +133,43 @@
 
 @code {
     private string? currentUrl;
+    private bool seasonActive;
+    private bool registrationOpen;
+    private bool hasSeasons;
+    private int teamCount;
+    private bool dataLoaded;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+
+        await LoadNavDataAsync();
+        dataLoaded = true;
+    }
+
+    private async Task LoadNavDataAsync()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+
+            hasSeasons = await db.RegistrationPeriods.AnyAsync();
+            seasonActive = await db.RegistrationPeriods.AnyAsync(rp => rp.IsActive);
+
+            var today = DateTime.Today;
+            registrationOpen = await db.RegistrationPeriods.AnyAsync(rp => rp.IsActive
+                && (!rp.RegistrationOpenDate.HasValue || rp.RegistrationOpenDate.Value.Date <= today)
+                && (!rp.RegistrationCloseDate.HasValue || rp.RegistrationCloseDate.Value.Date >= today));
+
+            teamCount = await db.Teams.CountAsync();
+        }
+        catch
+        {
+            hasSeasons = false;
+            seasonActive = false;
+            teamCount = 0;
+        }
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

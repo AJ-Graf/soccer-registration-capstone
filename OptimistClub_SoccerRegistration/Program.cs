@@ -63,8 +63,12 @@ internal class Program
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        // Also register the scoped DbContext so existing services continue to work
+        builder.Services.AddScoped(sp =>
+            sp.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
 
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -80,6 +84,13 @@ internal class Program
    .AddDefaultTokenProviders();
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+        // HttpClient for client-side components that may be prerendered on the server
+        builder.Services.AddScoped(sp =>
+        {
+            var navigationManager = sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+            return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+        });
 
         var app = builder.Build();
 
@@ -185,6 +196,23 @@ internal class Program
         }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
 
+        // REGISTRATION STATUS (used by the client-side home page)
+
+        app.MapGet("/api/registration/status", async (IRegistrationService regService) =>
+        {
+            var activeSeason = await regService.GetActiveSeasonAsync();
+            var registrationPeriod = await regService.GetActiveRegistrationPeriodAsync();
+            return Results.Ok(new
+            {
+                isOpen = registrationPeriod != null,
+                seasonYear = activeSeason?.SeasonYear,
+                startDate = activeSeason?.StartDate,
+                endDate = activeSeason?.EndDate,
+                registrationCloseDate = activeSeason?.RegistrationCloseDate
+            });
+        });
+
+
         // QR CODE 
 
         app.MapGet("/api/qrcode", (QrCodeService qrService, HttpContext context) =>
@@ -203,9 +231,6 @@ internal class Program
             .AddAdditionalAssemblies(typeof(OptimistClub_SoccerRegistration.Client._Imports).Assembly);
 
         app.MapAdditionalIdentityEndpoints();
-
-        // ✅ fallback (kept)
-        app.MapFallbackToFile("index.html");
 
         await app.RunAsync();
     }

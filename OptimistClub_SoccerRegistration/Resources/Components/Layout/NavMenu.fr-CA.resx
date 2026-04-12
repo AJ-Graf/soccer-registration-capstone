@@ -103,16 +103,24 @@
   <value>Accueil</value>
 </data>
 
-	<data name="Register" xml:space="preserve">
-  <value>Inscription</value>
+	<data name="RegisterPlayer" xml:space="preserve">
+  <value>Inscrire un joueur</value>
+</data>
+
+	<data name="RegisterVolunteer" xml:space="preserve">
+  <value>Inscription bénévole</value>
 </data>
 
 	<data name="AdminLogin" xml:space="preserve">
-  <value>Connexion administrateur</value>
+  <value>Connexion admin</value>
 </data>
 
 	<data name="Logout" xml:space="preserve">
   <value>Déconnexion</value>
+</data>
+
+	<data name="FieldLocation" xml:space="preserve">
+  <value>Emplacement du terrain</value>
 </data>
 
 </root>

@@ -55,8 +55,12 @@
 		<value>Season highlights</value>
 	</data>
 
-	<data name="Home_SeasonHighlights_Title">
-		<value>Recreational Soccer 2026</value>
+    <data name="Home_SeasonHighlights_Title">
+	<value>Recreational Soccer {0}</value>
+	</data>
+
+	<data name="Home_SeasonHighlights_Title_NoYear">
+	<value>Recreational Soccer</value>
 	</data>
 
 	<data name="Home_Ages_Label">
@@ -64,11 +68,11 @@
 	</data>
 
 	<data name="Home_Ages_Value">
-		<value>Preschool to Grade 8 (Birth years 2012 to 2021)</value>
+		<value>Preschool to Grade 8 (Birth years {0} to {1})</value>
 	</data>
 
 	<data name="Home_PreschoolNote_Label">
-		<value>Preschool (2022):</value>
+		<value>Preschool (Born in {0}, Age 3–4):</value>
 	</data>
 
 	<data name="Home_PreschoolNote_Value">
@@ -91,8 +95,8 @@
 		<value>Registration nights:</value>
 	</data>
 
-	<data name="Home_RegNights_Value">
-		<value>Thursday January 8 and Tuesday January 13, 2026</value>
+    <data name="Home_RegNights_Value">
+	<value>Thursday January 8 and Tuesday January 13, 2026</value>
 	</data>
 
 	<data name="Home_Time_Label">
@@ -144,8 +148,8 @@
 		<value>Registrations received after January 16 will be charged a late fee of $20 per child.</value>
 	</data>
 
-	<data name="Home_Deadline_Note">
-		<value>No registrations will be accepted after January 31, 2026.</value>
+    <data name="Home_Deadline_Note">
+	<value>No registrations will be accepted after {0}.</value>
 	</data>
 
 	<data name="Home_GeneralInfo_Title">
@@ -168,8 +172,12 @@
 		<value>Season duration:</value>
 	</data>
 
-	<data name="Home_SeasonDuration_Value">
-		<value>Every Monday from April 27 to June 15, 2026 (last Monday before the end of the school year)</value>
+    <data name="Home_SeasonDuration_Value">
+	<value>Every Monday from {0} to {1} (last Monday before the end of the school year)</value>
+	</data>
+
+	<data name="Home_SeasonDuration_Value_Default">
+	<value>To be determined</value>
 	</data>
 
 	<data name="Home_GameLocation_Label">
@@ -193,7 +201,7 @@
 	</data>
 
 	<data name="Home_GameTime_2022">
-		<value>6:00 PM to 6:45 PM (for 2022)</value>
+		<value>6:00 PM to 6:45 PM (for {0})</value>
 	</data>
 
 	<data name="Home_GameTime_Other1">
@@ -209,7 +217,7 @@
 	</data>
 
 	<data name="Home_MandatoryEquipment_ShinPads">
-		<value>Shin pads are mandatory for 2021+</value>
+		<value>Shin pads are mandatory for {0}+</value>
 	</data>
 
 	<data name="Home_MandatoryEquipment_Shoes">
@@ -221,6 +229,15 @@
 	</data>
 	<data name="Register_Button">
 		<value>Register a player</value>
+	</data>
+	<data name="RegisterVolunteer_Button">
+		<value>Register as a volunteer</value>
+	</data>
+	<data name="RegisterAnotherPlayer">
+		<value>Register another player</value>
+	</data>
+	<data name="RegistrationClosed">
+		<value>Registration is closed</value>
 	</data>
 	<data name="Home_ImportantDeadlines_Title">
   <value>Important registration deadlines</value>
@@ -237,7 +254,47 @@
 <data name="Home_Cancellation_Aria">
   <value>Weather and cancellation information</value>
 </data>
-	
-	
-	
+
+	<data name="Home_DateFormat_StartDate" xml:space="preserve">
+    <value>MMMM d</value>
+  </data>
+	<data name="Home_DateFormat_EndDate" xml:space="preserve">
+    <value>MMMM d, yyyy</value>
+  </data>
+	<data name="Home_DateFormat_DeadlineDate" xml:space="preserve">
+    <value>MMMM d, yyyy</value>
+  </data>
+	<data name="ChildShirtSize" xml:space="preserve">
+    <value>Child T-Shirt Size</value>
+  </data>
+	<data name="ChildXS" xml:space="preserve">
+    <value>Child XS (4-5)</value>
+  </data>
+	<data name="ChildS" xml:space="preserve">
+    <value>Child S (6)</value>
+  </data>
+	<data name="ChildM" xml:space="preserve">
+    <value>Child M (7-8)</value>
+  </data>
+	<data name="ChildL" xml:space="preserve">
+    <value>Child L (10-12)</value>
+  </data>
+	<data name="Home_Hero_Aria">
+		<value>Soccer registration hero banner</value>
+	</data>
+	<data name="Home_OffSeason_Title">
+		<value>Registration is currently closed</value>
+	</data>
+	<data name="Home_OffSeason_Message">
+		<value>Registration for the upcoming soccer season is not yet open. Please check back later or follow us on Facebook for announcements about the next registration period.</value>
+	</data>
+	<data name="Home_OffSeason_Contact_Title">
+		<value>Stay Connected</value>
+	</data>
+	<data name="VolunteerRegistrationComplete">
+		<value>You have completed the volunteer registration form.</value>
+	</data>
+	<data name="RegisterAnotherVolunteer">
+		<value>Register another volunteer</value>
+	</data>
 </root>

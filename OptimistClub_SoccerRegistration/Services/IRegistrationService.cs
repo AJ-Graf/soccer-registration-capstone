@@ -10,6 +10,8 @@ namespace OptimistClub_SoccerRegistration.Services
         Task<Registration> CreateRegistrationAsync(Registration registration);
 
         Task<RegistrationPeriod?> GetActiveRegistrationPeriodAsync();
+        Task<RegistrationPeriod?> GetActiveSeasonAsync();
+        Task<bool> HasAnyRegistrationPeriodsAsync();
         Task<List<Registration>> GetAllRegistrationsAsync();
         Task<List<Player>> GetAllPlayersAsync();
         Task<List<Parent>> GetAllParentsAsync();

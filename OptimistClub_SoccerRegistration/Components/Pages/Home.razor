@@ -1,10 +1,12 @@
 ﻿@using Microsoft.Extensions.Localization
+@using OptimistClub_SoccerRegistration.Services
 @inject IStringLocalizer<OptimistClub_SoccerRegistration.SharedResource> L
+@inject IRegistrationService RegistrationService
 
 <div class="text-center mb-4">
     <img src="images/Soccer_logo.png" alt="Soccer Optimiste" style="max-width: 150px;" />
     <h1 class="mt-3">@L["HomeTitle"]</h1>
-    <p class="lead text-muted">@L["HomeSubtitle"]</p>
+    <p class="lead text-muted">@(seasonYear.HasValue ? string.Format(L["HomeSubtitle"], seasonYear.Value) : L["HomeSubtitle"])</p>
 </div>
 
 <div class="row justify-content-center">
@@ -19,12 +21,38 @@
         <div class="card mb-4">
             <div class="card-header">@L["PaymentTitle"]</div>
             <div class="card-body">
-                <p>@L["PaymentInstructions"]</p>
+                <p>@L["PaymentInstructions_Intro"]</p>
+                <ul class="mb-0 ps-3">
+                    <li>@L["PaymentInstructions_Cheque"]</li>
+                    <li>@L["PaymentInstructions_Cash"]</li>
+                    <li>@L["PaymentInstructions_ETransfer"]</li>
+                </ul>
             </div>
         </div>
 
         <div class="text-center">
-            <a href="/register" class="btn btn-primary btn-lg">@L["RegisterNow"]</a>
+            @if (registrationOpen)
+            {
+                <a href="/register" class="btn btn-primary btn-lg">@L["RegisterNow"]</a>
+            }
+            else
+            {
+                <div class="alert alert-warning d-inline-block" role="alert">
+                    <strong>@L["RegistrationClosed"]</strong>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@code {
+    private bool registrationOpen;
+    private int? seasonYear;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var activePeriod = await RegistrationService.GetActiveRegistrationPeriodAsync();
+        registrationOpen = activePeriod != null;
+        seasonYear = activePeriod?.SeasonYear;
+    }
+}

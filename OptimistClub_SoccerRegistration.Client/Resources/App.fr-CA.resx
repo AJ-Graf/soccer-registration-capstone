@@ -55,7 +55,11 @@
 	</data>
 
 	<data name="Home_SeasonHighlights_Title">
-		<value>Soccer récréatif 2026</value>
+	<value>Soccer récréatif {0}</value>
+	</data>
+
+	<data name="Home_SeasonHighlights_Title_NoYear">
+	<value>Soccer récréatif</value>
 	</data>
 
 	<data name="Home_Ages_Label">
@@ -63,11 +67,11 @@
 	</data>
 
 	<data name="Home_Ages_Value">
-		<value>Maternelle à 8e année (années de naissance 2012 à 2021)</value>
+		<value>Maternelle à 8e année (années de naissance {0} à {1})</value>
 	</data>
 
 	<data name="Home_PreschoolNote_Label">
-		<value>Maternelle (2022) :</value>
+		<value>Maternelle (né en {0}, âge 3–4 ans):</value> 
 	</data>
 
 	<data name="Home_PreschoolNote_Value">
@@ -91,7 +95,7 @@
 	</data>
 
 	<data name="Home_RegNights_Value">
-		<value>Jeudi 8 janvier et mardi 13 janvier 2026</value>
+	<value>Jeudi 8 janvier et mardi 13 janvier 2026</value>
 	</data>
 
 	<data name="Home_Time_Label">
@@ -143,7 +147,7 @@
 	</data>
 
 	<data name="Home_Deadline_Note">
-		<value>Aucune inscription ne sera acceptée après le 31 janvier 2026.</value>
+	<value>Aucune inscription ne sera acceptée après le {0}.</value>
 	</data>
 
 	<data name="Home_GeneralInfo_Title">
@@ -167,7 +171,7 @@
 	</data>
 
 	<data name="Home_SeasonDuration_Value">
-		<value>Tous les lundis du 27 avril au 15 juin 2026 (dernier lundi avant la fin de l’année scolaire)</value>
+		<value>Tous les lundis du {0} au {1} (dernier lundi avant la fin de l’année scolaire)</value>
 	</data>
 
 	<data name="Home_GameLocation_Label">
@@ -191,7 +195,7 @@
 	</data>
 
 	<data name="Home_GameTime_2022">
-		<value>18h à 18h45 (pour 2022)</value>
+		<value>18h à 18h45 (pour {0})</value>
 	</data>
 
 	<data name="Home_GameTime_Other1">
@@ -207,7 +211,7 @@
 	</data>
 
 	<data name="Home_MandatoryEquipment_ShinPads">
-		<value>Protège-tibias obligatoires pour 2021+</value>
+		<value>Protège-tibias obligatoires pour {0}+</value>
 	</data>
 
 	<data name="Home_MandatoryEquipment_Shoes">
@@ -219,6 +223,15 @@
 	</data>
 	<data name="Register_Button">
 		<value>Enregistrer un(e) joueur(euse)</value>
+	</data>
+	<data name="RegisterVolunteer_Button">
+		<value>S'inscrire comme bénévole</value>
+	</data>
+	<data name="RegisterAnotherPlayer">
+		<value>Enregistrer un(e) autre joueur(euse)</value>
+	</data>
+	<data name="RegistrationClosed">
+		<value>Les inscriptions sont fermées</value>
 	</data>
 	<data name="Home_ImportantDeadlines_Title">
 		<value>Dates importantes pour l'inscription</value>
@@ -234,5 +247,51 @@
 
 	<data name="Home_Cancellation_Aria">
 		<value>Information concernant les conditions météorologiques et les annulations</value>
+	</data>
+
+	<data name="Home_SeasonDuration_Value_Default">
+		<value>À déterminer</value>
+	</data>
+	<data name="Home_DateFormat_StartDate" xml:space="preserve">
+    <value>d MMMM</value>
+  </data>
+	<data name="Home_DateFormat_EndDate" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+	<data name="Home_DateFormat_DeadlineDate" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+	<data name="ChildShirtSize" xml:space="preserve">
+    <value>Taille de t-shirt pour enfant</value>
+  </data>
+	<data name="ChildXS" xml:space="preserve">
+    <value>Enfant XS (4-5)</value>
+  </data>
+	<data name="ChildS" xml:space="preserve">
+    <value>Enfant S (6)</value>
+  </data>
+	<data name="ChildM" xml:space="preserve">
+    <value>Enfant M (7-8)</value>
+  </data>
+	<data name="ChildL" xml:space="preserve">
+    <value>Enfant L (10-12)</value>
+  </data>
+	<data name="Home_Hero_Aria" xml:space="preserve">
+		<value>Bannière d'en-tête de l'inscription au soccer</value>
+	</data>
+	<data name="Home_OffSeason_Title" xml:space="preserve">
+		<value>Les inscriptions sont présentement fermées</value>
+	</data>
+	<data name="Home_OffSeason_Message" xml:space="preserve">
+		<value>L'inscription pour la prochaine saison de soccer n'est pas encore ouverte. Veuillez revenir plus tard ou suivez-nous sur Facebook pour les annonces concernant la prochaine période d'inscription.</value>
+	</data>
+	<data name="Home_OffSeason_Contact_Title" xml:space="preserve">
+		<value>Restez connecté</value>
+	</data>
+	<data name="VolunteerRegistrationComplete" xml:space="preserve">
+		<value>Vous avez rempli le formulaire d'inscription comme bénévole.</value>
+	</data>
+	<data name="RegisterAnotherVolunteer" xml:space="preserve">
+		<value>Inscrire un(e) autre bénévole</value>
 	</data>
 </root>

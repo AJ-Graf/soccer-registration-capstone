@@ -84,7 +84,7 @@
     <li class="nav-item">
         <button class="nav-link @(activeTab == "registrations" ? "active" : "")"
                 @onclick='() => activeTab = "registrations"'>
-            Registrations
+            Payment Status
         </button>
     </li>
 </ul>
@@ -154,12 +154,13 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Parent</th>
                     <th>Gender</th>
                     <th>Date of Birth</th>
+                    <th>Age (at reg.)</th>
                     <th>Town</th>
                     <th>Shirt Size</th>
                     <th>Registered</th>
+                    <th>Parent</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -168,12 +169,13 @@
                 {
                     <tr>
                         <td>@p.FirstName @p.LastName</td>
-                        <td>@p.Parent?.FirstName @p.Parent?.LastName</td>
                         <td>@p.Gender</td>
                         <td>@p.DateOfBirth.ToShortDateString()</td>
+                        <td>@GetAge(p.DateOfBirth, p.DateAdded)</td>
                         <td>@p.Town</td>
                         <td>@FormatShirtSize(p.ShirtSize)</td>
                         <td>@p.DateAdded.ToShortDateString()</td>
+                        <td>@p.Parent?.FirstName @p.Parent?.LastName</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditPlayer(p)">Edit</button>
                             @if (confirmDeletePlayerId == p.PlayerId)
@@ -252,6 +254,7 @@
                     <th>Email Address</th>
                     <th>Phone Number</th>
                     <th>Waiver Status</th>
+                    <th>Child(ren)</th>
                     <th>Registered</th>
                     <th>Actions</th>
                 </tr>
@@ -265,6 +268,7 @@
                         <td>@p.Email</td>
                         <td>@p.PhoneNumber</td>
                         <td>@(p.WaiverAccepted ? "Accepted" : "Rejected")</td>
+                        <td>@(p.Players.Any() ? string.Join(", ", p.Players.Select(c => $"{c.FirstName} {c.LastName}")) : "—")</td>
                         <td>@p.DateAdded.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditParent(p)">Edit</button>
@@ -387,7 +391,7 @@
 @if (activeTab == "registrations")
 {
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Registrations</h4>
+        <h4>Payment Status</h4>
         <div>
             <select class="form-select form-select-sm" style="width: auto; display: inline-block;" @bind="paymentFilter" @bind:after="LoadData">
                 <option value="">All</option>
@@ -475,7 +479,8 @@
     private async Task LoadData()
     {
         players = await RegistrationService.GetAllPlayersAsync();
-        parents = await RegistrationService.GetAllParentsAsync();
+        var allParents = await RegistrationService.GetAllParentsAsync();
+        parents = allParents.Where(p => p.Players.Any()).ToList();
         volunteers = await RegistrationService.GetAllVolunteersAsync();
         
         var allRegistrations = await RegistrationService.GetAllRegistrationsAsync();
@@ -488,6 +493,13 @@
         parentCount = parents?.Count ?? 0;
         volunteerCount = volunteers?.Count ?? 0;
         pendingCount = allRegistrations?.Count(r => r.PaymentStatus == "Pending") ?? 0;
+    }
+
+    private int GetAge(DateTime dob, DateTime asOfDate)
+    {
+        var age = asOfDate.Year - dob.Year;
+        if (dob.Date > asOfDate.Date.AddYears(-age)) age--;
+        return age;
     }
 
     private string GetPaymentBadgeClass(string status)

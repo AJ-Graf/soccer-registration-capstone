@@ -349,7 +349,7 @@
     <value>Vous devez accepter la décharge de responsabilité avant de soumettre votre inscription.</value>
   </data>
   <data name="RegistrationClosed" xml:space="preserve">
-    <value>Les inscriptions sont closes</value>
+    <value>Les inscriptions sont fermées</value>
   </data>
   <data name="ElectronicSignatureHelp" xml:space="preserve">
     <value>Veuillez inscrire le nom complet du parent, du tuteur ou de la tutrice comme confirmation électronique.</value>
@@ -358,7 +358,7 @@
     <value>Club de football Optimist</value>
   </data>
   <data name="HomeSubtitle" xml:space="preserve">
-    <value>Inscription à la saison</value>
+    <value>Soccer récréatif {0} – Inscription à la saison</value>
   </data>
   <data name="SeasonInfoTitle" xml:space="preserve">
     <value>Informations sur la saison</value>
@@ -372,7 +372,43 @@
   <data name="RegisterNow" xml:space="preserve">
     <value>Inscrivez-vous maintenant</value>
   </data>
-	<data name="PaymentInstructions" xml:space="preserve">
-    <value>Instructions de paiement </value>
+	<data name="PaymentInstructions_Intro" xml:space="preserve">
+    <value>Nous acceptons les modes de paiement suivants :</value>
   </data>
+  <data name="PaymentInstructions_Cheque" xml:space="preserve">
+    <value>Chèque à l'ordre de : Soccer Optimiste Casselman</value>
+  </data>
+  <data name="PaymentInstructions_Cash" xml:space="preserve">
+    <value>Argent comptant</value>
+  </data>
+  <data name="PaymentInstructions_ETransfer" xml:space="preserve">
+    <value>Virement électronique à : socceroptimistecass@gmail.com</value>
+  </data>
+	<data name="RegisterAnotherPlayer">
+		<value>Enregistrer un(e) autre joueur(euse)</value>
+	</data>
+	<data name="VolunteerTitle" xml:space="preserve">
+		<value>Inscription des bénévoles</value>
+	</data>	
+	<data name="VolunteerRegistrationComplete" xml:space="preserve">
+		<value>Vous avez rempli le formulaire d'inscription comme bénévole.</value>
+	</data>
+	<data name="RegisterAnotherVolunteer" xml:space="preserve">
+		<value>Inscrire un(e) autre bénévole</value>
+	</data>
+	<data name="VolunteerPageNotice" xml:space="preserve">
+		<value>Les parents/tuteurs ayant un joueur inscrit doivent s'inscrire comme bénévoles lors du processus d'inscription du joueur. Cette section est destinée aux bénévoles sans joueur inscrit.</value>
+	</data>
+	<data name="FieldLocation" xml:space="preserve">
+		<value>Emplacement des terrains</value>
+	</data>
+	<data name="FieldLocationAddress" xml:space="preserve">
+		<value>Terrains de soccer de Casselman, Casselman, ON</value>
+	</data>
+	<data name="SelectField" xml:space="preserve">
+		<value>Sélectionner un terrain</value>
+	</data>
+	<data name="Field" xml:space="preserve">
+		<value>Terrain</value>
+	</data>
 </root>

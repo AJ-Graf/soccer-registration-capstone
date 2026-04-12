@@ -9,6 +9,14 @@
 
 <h2>Season Registration</h2>
 
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+    </div>
+}
+
 <div class="card mb-4">
     <div class="card-header">@(editingPeriod != null ? "Edit Period" : "Create New Period")</div>
     <div class="card-body">
@@ -27,10 +35,21 @@
             </div>
             <div class="col-md-2 mb-2">
                 <label class="form-label">Active</label>
-                <select class="form-select" @bind="formActive">
+                <select class="form-select" @bind="formActiveStr">
+                    <option value="">Select</option>
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                 </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Registration Opens</label>
+                <input type="date" class="form-control" @bind="formRegOpen" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label">Registration Closes</label>
+                <input type="date" class="form-control" @bind="formRegClose" />
             </div>
             <div class="col-md-2 mb-2 d-flex align-items-end">
                 <button class="btn btn-primary me-2" @onclick="SavePeriod">Save</button>
@@ -59,6 +78,8 @@ else
                 <th>Season Year</th>
                 <th>Start Date</th>
                 <th>End Date</th>
+                <th>Registration Opens</th>
+                <th>Registration Closes</th>
                 <th>Active</th>
                 <th>Actions</th>
             </tr>
@@ -70,6 +91,8 @@ else
                     <td>@p.SeasonYear</td>
                     <td>@p.StartDate.ToShortDateString()</td>
                     <td>@p.EndDate.ToShortDateString()</td>
+                    <td>@(p.RegistrationOpenDate.HasValue ? p.RegistrationOpenDate.Value.ToShortDateString() : "—")</td>
+                    <td>@(p.RegistrationCloseDate.HasValue ? p.RegistrationCloseDate.Value.ToShortDateString() : "—")</td>
                     <td>
                         @if (p.IsActive)
                         {
@@ -94,10 +117,13 @@ else
     private List<RegistrationPeriod>? periods;
     private RegistrationPeriod? editingPeriod;
 
-    private int formYear = DateTime.Now.Year;
-    private DateTime formStart = DateTime.Today;
-    private DateTime formEnd = DateTime.Today.AddMonths(3);
-    private bool formActive = true;
+    private int? formYear;
+    private DateTime? formStart;
+    private DateTime? formEnd;
+    private DateTime? formRegOpen;
+    private DateTime? formRegClose;
+    private string formActiveStr = "";
+    private bool formActive => string.Equals(formActiveStr, "true", StringComparison.OrdinalIgnoreCase);
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,8 +137,27 @@ else
             .ToListAsync();
     }
 
+    private string? errorMessage;
+
     private async Task SavePeriod()
     {
+        errorMessage = null;
+
+        if (!formYear.HasValue || !formStart.HasValue || !formEnd.HasValue || string.IsNullOrEmpty(formActiveStr))
+        {
+            errorMessage = "All fields are required.";
+            return;
+        }
+
+        var duplicateExists = await Context.RegistrationPeriods
+            .AnyAsync(p => p.SeasonYear == formYear.Value && (editingPeriod == null || p.PeriodId != editingPeriod.PeriodId));
+
+        if (duplicateExists)
+        {
+            errorMessage = $"A registration period for the {formYear.Value} season already exists.";
+            return;
+        }
+
         if (formActive)
         {
             var otherActive = await Context.RegistrationPeriods
@@ -124,22 +169,32 @@ else
             }
         }
 
+        if (formRegOpen.HasValue && formRegClose.HasValue && formRegOpen.Value > formRegClose.Value)
+        {
+            errorMessage = "Registration open date must be before the close date.";
+            return;
+        }
+
         if (editingPeriod != null)
         {
-            editingPeriod.SeasonYear = formYear;
-            editingPeriod.StartDate = formStart;
-            editingPeriod.EndDate = formEnd;
+            editingPeriod.SeasonYear = formYear.Value;
+            editingPeriod.StartDate = formStart.Value;
+            editingPeriod.EndDate = formEnd.Value;
             editingPeriod.IsActive = formActive;
+            editingPeriod.RegistrationOpenDate = formRegOpen;
+            editingPeriod.RegistrationCloseDate = formRegClose;
             Context.RegistrationPeriods.Update(editingPeriod);
         }
         else
         {
             var newPeriod = new RegistrationPeriod
             {
-                SeasonYear = formYear,
-                StartDate = formStart,
-                EndDate = formEnd,
-                IsActive = formActive
+                SeasonYear = formYear.Value,
+                StartDate = formStart.Value,
+                EndDate = formEnd.Value,
+                IsActive = formActive,
+                RegistrationOpenDate = formRegOpen,
+                RegistrationCloseDate = formRegClose
             };
             Context.RegistrationPeriods.Add(newPeriod);
         }
@@ -156,7 +211,9 @@ else
         formYear = p.SeasonYear;
         formStart = p.StartDate;
         formEnd = p.EndDate;
-        formActive = p.IsActive;
+        formRegOpen = p.RegistrationOpenDate;
+        formRegClose = p.RegistrationCloseDate;
+        formActiveStr = p.IsActive ? "true" : "false";
     }
 
     private void CancelEdit()
@@ -167,10 +224,12 @@ else
 
     private void ResetForm()
     {
-        formYear = DateTime.Now.Year;
-        formStart = DateTime.Today;
-        formEnd = DateTime.Today.AddMonths(3);
-        formActive = true;
+        formYear = null;
+        formStart = null;
+        formEnd = null;
+        formRegOpen = null;
+        formRegClose = null;
+        formActiveStr = "";
     }
 
     private async Task DeletePeriod(int id)

@@ -103,8 +103,12 @@
   <value>Home</value>
 </data>
 
-	<data name="Register" xml:space="preserve">
-  <value>Register</value>
+	<data name="RegisterPlayer" xml:space="preserve">
+  <value>Register a Player</value>
+</data>
+
+	<data name="RegisterVolunteer" xml:space="preserve">
+  <value>Register as Volunteer</value>
 </data>
 
 	<data name="AdminLogin" xml:space="preserve">
@@ -113,6 +117,10 @@
 
 	<data name="Logout" xml:space="preserve">
   <value>Logout</value>
+</data>
+
+	<data name="FieldLocation" xml:space="preserve">
+  <value>Field Location</value>
 </data>
 
 </root>
